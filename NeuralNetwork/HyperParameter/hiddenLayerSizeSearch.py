@@ -6,7 +6,7 @@ import joblib
 
 
 # Load and partition data
-df = pd.read_csv("NeuralNetwork/scan3.csv")
+df = pd.read_csv("scans/scan4/scan4.csv")
 X = df.loc[:, ['RotTrans', 'axLenght', 'max_elong']]
 y = df.loc[:, ['nfp', 'rc1', 'zs1', 'eta']]
 
