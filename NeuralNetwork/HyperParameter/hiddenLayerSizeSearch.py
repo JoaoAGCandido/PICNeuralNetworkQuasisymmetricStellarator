@@ -3,6 +3,22 @@ import numpy as np
 from sklearn import metrics, neural_network
 from sklearn.model_selection import train_test_split
 import joblib
+import os
+
+
+def saveData(out):
+    df = pd.DataFrame(out)
+    file_exists = os.path.isfile("NeuralNetwork/HyperParameter/loss.csv")
+    if file_exists:
+        df.to_csv("NeuralNetwork/HyperParameter/loss.csv", index=False, header=False, mode="a")
+    else:
+        df.to_csv("NeuralNetwork/HyperParameter/loss.csv", index=False)
+    # clear out
+    out = {
+        'hiddenLayerSize': [],
+        'loss': [],
+    }
+    return out
 
 
 # Load and partition data
@@ -14,6 +30,12 @@ y = df.loc[:, ['nfp', 'rc1', 'zs1', 'eta']]
 X_train, X_test, y_train, y_test = \
     train_test_split(X, y, test_size=0.3, train_size=0.7,
                      random_state=0)
+
+# arrays to store output
+out = {
+    'hiddenLayerSize': [],
+    'loss': [],
+}
 
 
 for layerSize in np.arange(5, 40, 5):
@@ -48,6 +70,11 @@ for layerSize in np.arange(5, 40, 5):
         # Train
         neuralNetwork.fit(X_train, y_train)
 
+        out['hiddenLayerSize'].append(hiddenLayerSize)
+        out['loss'].append(neuralNetwork.loss_)
+
         # save neural network
         joblib.dump(neuralNetwork, "NeuralNetwork/HyperParameter/hiddenLayerSizeShearchNeuralNetworks/neuralNet{}".format(
             numLayers+2) + "Layers" + "Size{}".format(layerSize) + ".pkl")
+
+saveData(out)
