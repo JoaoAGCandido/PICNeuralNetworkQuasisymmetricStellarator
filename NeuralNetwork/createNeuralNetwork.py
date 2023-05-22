@@ -1,33 +1,23 @@
 import pandas as pd
-from sklearn import neural_network
+from sklearn import neural_network, preprocessing
 from sklearn.model_selection import train_test_split
 import joblib
 
 
-def standardize(df):
-    """Returns a standardize dataframe along with means and std deviations"""
-    out = df.copy()
-    for name, values in df.items():
-        out[name] = (df[name] - df[name].mean()) / df[name].std()
-    return out, df.mean(), df.std()
-
-def destandardize(df, mean, std):
-    """Returns the dataframe before being standardized"""
-    out = df.copy()
-    for name, values in df.items():
-        out[name] = df[name] * std[name] + mean[name]
-    return out
-
-
 # Load and partition data
 df = pd.read_csv("scans/scan4/scan4.csv")
-dfStd, mean, std = standardize(df)
-X = dfStd.loc[:, ['RotTrans', 'axLenght', 'max_elong']]
-y = dfStd.loc[:, ['nfp', 'rc1', 'zs1', 'eta']]
+X = df.loc[:, ['RotTrans', 'axLenght', 'max_elong']]
+X_scaler = preprocessing.StandardScaler()
+X_scaler.fit(X)
+X_scaled = X_scaler.transform(X)
+y = df.loc[:, ['nfp', 'rc1', 'zs1', 'eta']]
+y_scaler = preprocessing.StandardScaler()
+y_scaler.fit(y)
+y_scaled = y_scaler.transform(y)
 
 # Split training and testing sets
 X_train, X_test, y_train, y_test = \
-    train_test_split(X, y, test_size=0.3, train_size=0.7,
+    train_test_split(X_scaled, y_scaled, test_size=0.3, train_size=0.7,
                      random_state=0)
 
 # Setup regressors
@@ -58,5 +48,7 @@ neuralNetwork = neural_network.MLPRegressor(hidden_layer_sizes=(20, 20, 20),
 # Train
 neuralNetwork.fit(X_train, y_train)
 
-# save neural network
+# save neural network and scalers
 joblib.dump(neuralNetwork, "NeuralNetwork/neuralNetwork.pkl")
+joblib.dump(X_scaler, "NeuralNetwork/X_scaler.pkl")
+joblib.dump(y_scaler, "NeuralNetwork/y_scaler.pkl")
