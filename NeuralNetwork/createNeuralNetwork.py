@@ -4,10 +4,26 @@ from sklearn.model_selection import train_test_split
 import joblib
 
 
+def standardize(df):
+    """Returns a standardize dataframe along with means and std deviations"""
+    out = df.copy()
+    for name, values in df.items():
+        out[name] = (df[name] - df[name].mean()) / df[name].std()
+    return out, df.mean(), df.std()
+
+def destandardize(df, mean, std):
+    """Returns the dataframe before being standardized"""
+    out = df.copy()
+    for name, values in df.items():
+        out[name] = df[name] * std[name] + mean[name]
+    return out
+
+
 # Load and partition data
 df = pd.read_csv("scans/scan4/scan4.csv")
-X = df.loc[:, ['RotTrans', 'axLenght', 'max_elong']]
-y = df.loc[:, ['nfp', 'rc1', 'zs1', 'eta']]
+dfStd, mean, std = standardize(df)
+X = dfStd.loc[:, ['RotTrans', 'axLenght', 'max_elong']]
+y = dfStd.loc[:, ['nfp', 'rc1', 'zs1', 'eta']]
 
 # Split training and testing sets
 X_train, X_test, y_train, y_test = \
