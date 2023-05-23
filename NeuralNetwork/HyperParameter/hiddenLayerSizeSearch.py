@@ -1,8 +1,7 @@
 import pandas as pd
 import numpy as np
-from sklearn import metrics, neural_network
+from sklearn import preprocessing, neural_network
 from sklearn.model_selection import train_test_split
-import joblib
 import os
 
 
@@ -24,11 +23,17 @@ def saveData(out):
 # Load and partition data
 df = pd.read_csv("scans/scan4/scan4.csv.zip")
 X = df.loc[:, ['RotTrans', 'axLenght', 'max_elong']]
+X_scaler = preprocessing.StandardScaler()
+X_scaler.fit(X)
+X_scaled = X_scaler.transform(X)
 y = df.loc[:, ['nfp', 'rc1', 'zs1', 'eta']]
+y_scaler = preprocessing.StandardScaler()
+y_scaler.fit(y)
+y_scaled = y_scaler.transform(y)
 
 # Split training and testing sets
 X_train, X_test, y_train, y_test = \
-    train_test_split(X, y, test_size=0.3, train_size=0.7,
+    train_test_split(X_scaled, y_scaled, test_size=0.3, train_size=0.7,
                      random_state=0)
 
 # arrays to store output
