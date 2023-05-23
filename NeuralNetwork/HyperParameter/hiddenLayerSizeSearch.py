@@ -73,8 +73,4 @@ for layerSize in np.arange(5, 40, 5):
         out['hiddenLayerSize'].append(hiddenLayerSize)
         out['loss'].append(neuralNetwork.loss_)
 
-        # save neural network
-        joblib.dump(neuralNetwork, "NeuralNetwork/HyperParameter/hiddenLayerSizeShearchNeuralNetworks/neuralNet{}".format(
-            numLayers+2) + "Layers" + "Size{}".format(layerSize) + ".pkl")
-
 saveData(out)
