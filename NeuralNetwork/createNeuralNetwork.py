@@ -5,7 +5,7 @@ import joblib
 
 
 # Load and partition data
-df = pd.read_csv("scans/scan4/scan4.csv")
+df = pd.read_csv("scans/scan4/scan4.csv.zip")
 X = df.loc[:, ['RotTrans', 'axLenght', 'max_elong']]
 X_scaler = preprocessing.StandardScaler()
 X_scaler.fit(X)

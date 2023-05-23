@@ -22,7 +22,7 @@ def saveData(out):
 
 
 # Load and partition data
-df = pd.read_csv("scans/scan4/scan4.csv")
+df = pd.read_csv("scans/scan4/scan4.csv.zip")
 X = df.loc[:, ['RotTrans', 'axLenght', 'max_elong']]
 y = df.loc[:, ['nfp', 'rc1', 'zs1', 'eta']]
 
