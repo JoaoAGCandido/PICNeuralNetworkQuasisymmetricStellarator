@@ -43,7 +43,7 @@ out = {
 }
 
 
-for layerSize in np.arange(5, 40, 5):
+for layerSize in np.arange(15, 55, 5):
     hiddenLayerSize = [layerSize]
     for numLayers in range(4):
         hiddenLayerSize.append(layerSize)
