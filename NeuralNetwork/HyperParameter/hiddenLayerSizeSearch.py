@@ -75,7 +75,7 @@ for layerSize in np.arange(5, 40, 5):
         # Train
         neuralNetwork.fit(X_train, y_train)
 
-        out['hiddenLayerSize'].append(hiddenLayerSize)
+        out['hiddenLayerSize'].append(str(hiddenLayerSize))
         out['loss'].append(neuralNetwork.loss_)
 
 saveData(out)
