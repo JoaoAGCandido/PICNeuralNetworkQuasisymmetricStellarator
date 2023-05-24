@@ -100,7 +100,7 @@ input = {
     # number of measurements (nfp * num ^3)
     'num': args.num,
     'nfp': [args.nfpMin, args.nfpMax],
-    'rc1': [-0.3, 0.3],
+    'rc1': [0, 0.3],
     'zs1': [0, -0.3],
     'eta': [-3, -0.01],
 }
