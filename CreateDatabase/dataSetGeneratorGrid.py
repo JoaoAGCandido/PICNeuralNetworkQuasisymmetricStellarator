@@ -10,7 +10,7 @@ import logging
 
 
 parser = argparse.ArgumentParser(
-    description="Scans using pyQsc for 1st order with the following parameters: rc1 -> 0, 0.3; z1 -> 0, -0.3; eta -> -3, -0.01\nexample:\npython3 CreateDatabase/dataSetGeneratorGrid.py 10 1 8 scan.csv.zip")
+    description="Scans using pyQsc for 1st order with the following parameters: rc1 -> 0, 0.3; z1 -> 0, -0.3; eta -> -3, -0.01\nexample:\npython3 CreateDatabase/dataSetGeneratorGrid.py 10 1 8 scan.csv.zip scanFails.csv.zip")
 parser.add_argument(
     "num", help="Number of calculations for each parameter", type=int)
 parser.add_argument(
@@ -19,6 +19,8 @@ parser.add_argument(
     "nfpMax", help="Ending number of field periods (nfp) for the scan", type=int)
 parser.add_argument(
     "fileName", help="Name of the file to be created")
+parser.add_argument(
+    "fileNameFails", help="Name of the file to be created example for failed Stellarators scanFails.csv.zip")
 parser.add_argument("-v", "--verbose", action="store_true",
                     help="Prints the duration in seconds and the progress, by showing the current number of field periods (nfp)")
 args = parser.parse_args()
@@ -64,12 +66,12 @@ def saveFailedData(rc1, zs1, nfp, eta, message):
         'message': message
     }
     df = pd.DataFrame(dict)
-    file_exists = os.path.isfile("failedStellarators.csv")
+    file_exists = os.path.isfile(args.fileNameFails)
     if file_exists:
-        df.to_csv("failedStellarators.csv",
+        df.to_csv(args.fileNameFails,
                   index=False, header=False, mode="a")
     else:
-        df.to_csv("failedStellarators.csv", index=False)
+        df.to_csv(args.fileNameFails, index=False)
 
 
 def newton_solution_fail_filter(record):

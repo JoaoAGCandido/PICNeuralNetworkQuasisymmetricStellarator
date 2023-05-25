@@ -11,7 +11,7 @@ import random as rnd
 
 
 parser = argparse.ArgumentParser(
-    description="Scans using pyQsc for 1st order with random values on the interval: rc1 -> 0, 0.3; z1 -> 0, -0.3; eta -> -3, -0.01\nexample:\npython3 CreateDatabase/dataSetGeneratorRand.py 10000 1 8 scan.csv.zip")
+    description="Scans using pyQsc for 1st order with random values on the interval: rc1 -> 0, 0.3; z1 -> 0, -0.3; eta -> -3, -0.01\nexample:\npython3 CreateDatabase/dataSetGeneratorRand.py 10000 1 8 scan.csv.zip scanFails.csv.zip")
 parser.add_argument(
     "num", help="Number of calculations for each nfp", type=int)
 parser.add_argument(
@@ -20,6 +20,8 @@ parser.add_argument(
     "nfpMax", help="Ending number of field periods (nfp) for the scan", type=int)
 parser.add_argument(
     "fileName", help="Name of the file to be created example scan.csv.zip")
+parser.add_argument(
+    "fileNameFails", help="Name of the file to be created example for failed Stellarators scanFails.csv.zip")
 parser.add_argument("-v", "--verbose", action="store_true",
                     help="Prints the expected duration in seconds")
 args = parser.parse_args()
@@ -65,12 +67,11 @@ def saveFailedData(rc1, zs1, nfp, eta, message):
         'message': message
     }
     df = pd.DataFrame(dict)
-    file_exists = os.path.isfile("failedStellarators.csv")
+    file_exists = os.path.isfile(args.fileNameFails)
     if file_exists:
-        df.to_csv("failedStellarators.csv",
-                  index=False, header=False, mode="a")
+        df.to_csv(args.fileNameFails, index=False, header=False, mode="a")
     else:
-        df.to_csv("failedStellarators.csv", index=False)
+        df.to_csv(args.fileNameFails, index=False)
 
 
 def newton_solution_fail_filter(record):
