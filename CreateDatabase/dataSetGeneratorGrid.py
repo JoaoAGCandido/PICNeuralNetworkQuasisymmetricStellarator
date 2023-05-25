@@ -10,7 +10,7 @@ import logging
 
 
 parser = argparse.ArgumentParser(
-    description="Scans using pyQsc for 1st order with the following parameters: rc1 -> 0, 0.3; z1 -> 0, -0.3; eta -> -3, -0.01\nexample:\npython3 CreateDatabase/dataSetGeneratorGrid.py 10 1 8 scan.cs")
+    description="Scans using pyQsc for 1st order with the following parameters: rc1 -> 0, 0.3; z1 -> 0, -0.3; eta -> -3, -0.01\nexample:\npython3 CreateDatabase/dataSetGeneratorGrid.py 10 1 8 scan.csv.zip")
 parser.add_argument(
     "num", help="Number of calculations for each parameter", type=int)
 parser.add_argument(
