@@ -37,8 +37,12 @@ def saveData(out):
         df.to_csv(args.fileName, index=False)
     # clear out
     out = {
-        'hiddenLayerSize': [],
-        'loss': [],
+        'alpha': [],
+        'learning_rate_init': [],
+        'beta_1': [],
+        'beta_2': [],
+        'epsilon': [],
+        'loss': []
     }
     return out
 
@@ -75,18 +79,18 @@ out = {
 
 startTime = time.time()
 for i in range(args.num):
-    out['alpha'].append(rnd.uniform(0.000001, 0.1))
-    out['learning_rate_init'].append(rnd.uniform(0.000001, 0.1))
-    out['beta_1'].append(rnd.uniform(0.1, 0.99))
-    out['beta_2'].append(rnd.uniform(0.8, 0.999999))
-    out['epsilon'].append(rnd.uniform(1e-10, 1e-07))
+    alpha = rnd.uniform(0.000001, 0.1)
+    learning_rate_init = rnd.uniform(0.000001, 0.1)
+    beta_1=rnd.uniform(0.1, 0.99)
+    beta_2=rnd.uniform(0.8, 0.999999)
+    epsilon=rnd.uniform(1e-10, 1e-07)
     neuralNetwork = neural_network.MLPRegressor(hidden_layer_sizes=(35, 35, 35, 35),
                                                 activation='tanh',
                                                 solver='adam',
-                                                alpha=out['alpha'][i],
+                                                alpha=alpha,
                                                 batch_size='auto',
                                                 # learning_rate='constant', (sgd)
-                                                learning_rate_init=out['learning_rate_init'][i],
+                                                learning_rate_init=learning_rate_init,
                                                 # power_t=0.5, (sgd)
                                                 max_iter=1000,
                                                 shuffle=True,
@@ -99,16 +103,21 @@ for i in range(args.num):
                                                 early_stopping=False,
                                                 validation_fraction=0.1,
                                                 # (adam)
-                                                beta_1=out['beta_1'][i],
+                                                beta_1=beta_1,
                                                 # (adam)
-                                                beta_2=out['beta_2'][i],
+                                                beta_2=beta_2,
                                                 # (adam)
-                                                epsilon=out['epsilon'][i],
+                                                epsilon=epsilon,
                                                 n_iter_no_change=10,
                                                 )
 
     # Train
     neuralNetwork.fit(X_train, y_train)
+    out['alpha'].append(alpha)
+    out['learning_rate_init'].append(learning_rate_init)
+    out['beta_1'].append(beta_1)
+    out['beta_2'].append(beta_2)
+    out['epsilon'].append(epsilon)
     out['loss'].append(neuralNetwork.loss_)
 
     if (i % 15 == 0):
