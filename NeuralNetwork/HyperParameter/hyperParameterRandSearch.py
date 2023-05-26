@@ -9,9 +9,13 @@ import argparse
 
 
 parser = argparse.ArgumentParser(
-    description="Train neural networks with random hyperparameters returning csv with losses\nexample:\npython3 NeuralNetwork/HyperParameter/hyperParameterRandSearch.py 500")
+    description="Train neural networks with random hyperparameters returning csv with losses\nexample:\npython3 NeuralNetwork/HyperParameter/hyperParameterRandSearch.py 500 loss.csv --nfp=5")
 parser.add_argument(
     "num", help="Number of scans", type=int)
+parser.add_argument(
+    "fileName", help="Name of the file to be created")
+parser.add_argument(
+    "--nfp", help="Train neural networks for a specific nfp (2 to 8) instead of all", type=int, default=0, choices=range(2, 9))
 parser.add_argument("-v", "--verbose", action="store_true",
                     help="Prints the predicted duration in seconds")
 args = parser.parse_args()
@@ -26,13 +30,11 @@ def estimatedTime():
 
 def saveData(out):
     df = pd.DataFrame(out)
-    file_exists = os.path.isfile(
-        "NeuralNetwork/HyperParameter/lossRandSearch.csv")
+    file_exists = os.path.isfile(args.fileName)
     if file_exists:
-        df.to_csv("NeuralNetwork/HyperParameter/lossRandSearch.csv",
-                  index=False, header=False, mode="a")
+        df.to_csv(args.fileName, index=False, header=False, mode="a")
     else:
-        df.to_csv("NeuralNetwork/HyperParameter/lossRandSearch.csv", index=False)
+        df.to_csv(args.fileName, index=False)
     # clear out
     out = {
         'hiddenLayerSize': [],
@@ -43,6 +45,10 @@ def saveData(out):
 
 # Load and partition data
 df = pd.read_csv("scans/scan4/scan4.csv.zip")
+# select nfp
+if (args.nfp != 0):
+    df = df[df['nfp'] == args.nfp]
+
 X = df.loc[:, ['RotTrans', 'axLenght', 'max_elong']]
 X_scaler = preprocessing.StandardScaler()
 X_scaler.fit(X)
@@ -106,7 +112,7 @@ for i in range(args.num):
     out['loss'].append(neuralNetwork.loss_)
 
     if (i % 15 == 0):
-        saveData(out)
+        out = saveData(out)
 
     if (i == 9):
         estimatedTime()

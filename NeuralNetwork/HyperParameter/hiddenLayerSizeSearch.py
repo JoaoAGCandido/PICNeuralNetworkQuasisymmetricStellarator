@@ -1,17 +1,28 @@
 import pandas as pd
 import numpy as np
+import argparse
 from sklearn import preprocessing, neural_network
 from sklearn.model_selection import train_test_split
 import os
 
 
+parser = argparse.ArgumentParser(
+    description="Returns a csv with various losses from neural networks with different hidden layer sizes\nexample:\npython3 NeuralNetwork/HyperParameter/hiddenLayerSizeSearch.py --nfp=4 loss.csv")
+parser.add_argument(
+    "--nfp", help="Train neural networks for a specific nfp (2 to 8), default = all nfp", type=int, default=0, choices=range(2, 9))
+parser.add_argument(
+    "fileName", help="Name of the file to be created")
+
+args = parser.parse_args()
+
+
 def saveData(out):
     df = pd.DataFrame(out)
-    file_exists = os.path.isfile("NeuralNetwork/HyperParameter/loss.csv")
+    file_exists = os.path.isfile(args.fileName)
     if file_exists:
-        df.to_csv("NeuralNetwork/HyperParameter/loss.csv", index=False, header=False, mode="a")
+        df.to_csv(args.fileName, index=False, header=False, mode="a")
     else:
-        df.to_csv("NeuralNetwork/HyperParameter/loss.csv", index=False)
+        df.to_csv(args.fileName, index=False)
     # clear out
     out = {
         'hiddenLayerSize': [],
@@ -22,6 +33,10 @@ def saveData(out):
 
 # Load and partition data
 df = pd.read_csv("scans/scan4/scan4.csv.zip")
+# select nfp
+if (args.nfp != 0):
+    df = df[df['nfp'] == args.nfp]
+
 X = df.loc[:, ['RotTrans', 'axLenght', 'max_elong']]
 X_scaler = preprocessing.StandardScaler()
 X_scaler.fit(X)

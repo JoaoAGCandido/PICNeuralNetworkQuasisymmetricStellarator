@@ -2,10 +2,23 @@ import pandas as pd
 from sklearn import neural_network, preprocessing
 from sklearn.model_selection import train_test_split
 import joblib
+import argparse
+
+
+parser = argparse.ArgumentParser(
+    description="Train a neural network\nexample:\npython3 NeuralNetwork/createNeuralNetwork.py --nfp=4 nn.pkl")
+parser.add_argument(
+    "--nfp", help="Train neural networks for a specific nfp (2 to 8), default = all nfp", type=int, default=0, choices=range(2, 9))
+parser.add_argument("-v", "--verbose", action="store_true")
+args = parser.parse_args()
 
 
 # Load and partition data
 df = pd.read_csv("scans/scan4/scan4.csv.zip")
+# select nfp
+if (args.nfp != 0):
+    df = df[df['nfp'] == args.nfp]
+
 X = df.loc[:, ['RotTrans', 'axLenght', 'max_elong']]
 X_scaler = preprocessing.StandardScaler()
 X_scaler.fit(X)
@@ -33,7 +46,7 @@ neuralNetwork = neural_network.MLPRegressor(hidden_layer_sizes=(20, 20, 20),
                                             shuffle=True,
                                             random_state=None,
                                             tol=0.0001,
-                                            verbose=False,
+                                            verbose=args.verbose,
                                             warm_start=False,
                                             #momentum=0.9, (sgd)
                                             #nesterovs_momentum=True, (sgd)
