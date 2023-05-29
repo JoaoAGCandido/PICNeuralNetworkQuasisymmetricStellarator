@@ -48,7 +48,7 @@ def saveData(out):
 
 
 # Load and partition data
-df = pd.read_csv("scans/scan4/scan4.csv.zip")
+df = pd.read_csv("scans/scan7/scan7.csv.zip")
 # select nfp
 if (args.nfp != 0):
     df = df[df['nfp'] == args.nfp]
@@ -79,12 +79,12 @@ out = {
 
 startTime = time.time()
 for i in range(args.num):
-    alpha = rnd.uniform(0.000001, 0.1)
-    learning_rate_init = rnd.uniform(0.000001, 0.1)
-    beta_1=rnd.uniform(0.1, 0.99)
-    beta_2=rnd.uniform(0.8, 0.999999)
-    epsilon=rnd.uniform(1e-10, 1e-07)
-    neuralNetwork = neural_network.MLPRegressor(hidden_layer_sizes=(35, 35, 35, 35),
+    alpha = abs(rnd.gauss(0.0001, 0.0002))
+    learning_rate_init = abs(rnd.gauss(0.001, 0.002))
+    beta_1=rnd.uniform(0.7, 0.99)
+    beta_2=rnd.uniform(0.98, 0.999999)
+    epsilon=abs(rnd.gauss(1e-8, 2e-08))
+    neuralNetwork = neural_network.MLPRegressor(hidden_layer_sizes=(40,40,40,40),
                                                 activation='tanh',
                                                 solver='adam',
                                                 alpha=alpha,

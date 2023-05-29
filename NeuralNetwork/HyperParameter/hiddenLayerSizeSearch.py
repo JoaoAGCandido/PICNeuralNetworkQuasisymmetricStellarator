@@ -32,7 +32,7 @@ def saveData(out):
 
 
 # Load and partition data
-df = pd.read_csv("scans/scan4/scan4.csv.zip")
+df = pd.read_csv("scans/scan7/scan7.csv.zip")
 # select nfp
 if (args.nfp != 0):
     df = df[df['nfp'] == args.nfp]
