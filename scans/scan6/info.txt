@@ -1,3 +1,2 @@
-this file was created using:
-python3 /marconi/home/userexternal/jcandido/PICNeuralNetworkQuasisymmetricStellarator/CreateDatabase/dataSetGeneratorRand.py 150000 1 8 scans/scan6/scan6.csv.zip scans/scan6/FailsScan6.csv.zip -v
-
+Obtained with
+dataSetGeneratorRand.py 150000 1 8 scans/scan6/scan6.csv scans/scan6/FailsScan6.csv -v
