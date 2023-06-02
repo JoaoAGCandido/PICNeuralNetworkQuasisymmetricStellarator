@@ -104,7 +104,7 @@ for layerSize in np.arange(15, 55, 5):
         startTime = time.time()
         neuralNetwork.fit(X_train, y_train)
         out['hiddenLayerSize'].append(str(hiddenLayerSize))
-        endTime = time.time - startTime
+        endTime = time.time() - startTime
         out['trainTime'].append(str(datetime.timedelta(seconds=int(endTime))))
         out['loss'].append(neuralNetwork.loss_)
         out['bestValidationScore'].append(neuralNetwork.best_validation_score_)
