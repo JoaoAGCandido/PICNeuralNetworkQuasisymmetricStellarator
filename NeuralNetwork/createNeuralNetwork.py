@@ -14,7 +14,7 @@ args = parser.parse_args()
 
 
 # Load and partition data
-df = pd.read_csv("scans/scan4/scan4.csv.zip")
+df = pd.read_csv("scans/scan7/scan7.csv.zip")
 # select nfp
 if (args.nfp != 0):
     df = df[df['nfp'] == args.nfp]
@@ -34,7 +34,7 @@ X_train, X_test, y_train, y_test = \
                      random_state=0)
 
 # Setup regressors
-neuralNetwork = neural_network.MLPRegressor(hidden_layer_sizes=(20, 20, 20),
+neuralNetwork = neural_network.MLPRegressor(hidden_layer_sizes=(35,35,35,35),
                                             activation='tanh',
                                             solver='adam',
                                             alpha=0.0001,
