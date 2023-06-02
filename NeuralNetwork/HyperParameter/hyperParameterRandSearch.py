@@ -1,23 +1,28 @@
 import pandas as pd
-from sklearn import preprocessing, neural_network
+from sklearn import neural_network, preprocessing
 from sklearn.model_selection import train_test_split
+import argparse
+import numpy as np
 import os
 import random as rnd
 import time
 import datetime
-import argparse
 
 
 parser = argparse.ArgumentParser(
-    description="Train neural networks with random hyperparameters returning csv with losses\nexample:\npython3 NeuralNetwork/HyperParameter/hyperParameterRandSearch.py 500 loss.csv --nfp=5")
+    description="Returns a csv with various losses from neural networks with random hyper parameters\nexample:\npython3 NeuralNetwork/HyperParameter/hyperParameterRandSearch.py 500 -v -nfp=3 -ds=\"scans/scan7/scan7.csv.zip\" -f=\"NeuralNetwork/HyperParameter/randLoss.csv\"")
 parser.add_argument(
     "num", help="Number of scans", type=int)
 parser.add_argument(
-    "fileName", help="Name of the file to be created")
+    "-nfp", "--nfp", help="Train neural networks for a specific nfp (1 to 8), default = 0 (all nfp)", type=int, default=0, choices=range(0, 9))
 parser.add_argument(
-    "--nfp", help="Train neural networks for a specific nfp (2 to 8) instead of all", type=int, default=0, choices=range(2, 9))
+    "-ds", "--dataSet", help="Data set to train Network with, default=\"scans/scan7/scan7Clean.csv.zip\"", type=str, default="scans/scan7/scan7Clean.csv.zip")
+parser.add_argument(
+    "-es", "--noEarlyStop", help="Disable early_stopping", action="store_false")
 parser.add_argument("-v", "--verbose", action="store_true",
-                    help="Prints the predicted duration in seconds")
+                    help="Prints verbose including the predicted duration in seconds")
+parser.add_argument(
+    "-f", "--fileName", help="Name of the created file, ex \"NeuralNetwork/HyperParameter/randLoss.csv\"", type=str, default="NeuralNetwork/HyperParameter/randLoss.csv")
 args = parser.parse_args()
 
 
@@ -31,6 +36,7 @@ def estimatedTime():
 def saveData(out):
     df = pd.DataFrame(out)
     file_exists = os.path.isfile(args.fileName)
+    df.sort_values("bestValidationScore", ascending=True)
     if file_exists:
         df.to_csv(args.fileName, index=False, header=False, mode="a")
     else:
@@ -42,13 +48,14 @@ def saveData(out):
         'beta_1': [],
         'beta_2': [],
         'epsilon': [],
-        'loss': []
+        'loss': [],
+        'bestValidationScore': []
     }
     return out
 
 
 # Load and partition data
-df = pd.read_csv("scans/scan7/scan7Clean.csv.zip")
+df = pd.read_csv(args.dataSet)
 # select nfp
 if (args.nfp != 0):
     df = df[df['nfp'] == args.nfp]
@@ -57,7 +64,10 @@ X = df.loc[:, ['RotTrans', 'axLenght', 'max_elong']]
 X_scaler = preprocessing.StandardScaler()
 X_scaler.fit(X)
 X_scaled = X_scaler.transform(X)
-y = df.loc[:, ['nfp', 'rc1', 'zs1', 'eta']]
+if (args.nfp == 0):
+    y = df.loc[:, ['nfp', 'rc1', 'zs1', 'eta']]
+else:
+    y = df.loc[:, ['rc1', 'zs1', 'eta']]
 y_scaler = preprocessing.StandardScaler()
 y_scaler.fit(y)
 y_scaled = y_scaler.transform(y)
@@ -74,17 +84,19 @@ out = {
     'beta_1': [],
     'beta_2': [],
     'epsilon': [],
-    'loss': []
+    'loss': [],
+    'bestValidationScore': []
 }
+
 
 startTime = time.time()
 for i in range(args.num):
     alpha = abs(rnd.gauss(0.0001, 0.0002))
     learning_rate_init = abs(rnd.gauss(0.001, 0.002))
-    beta_1=rnd.uniform(0.7, 0.99)
-    beta_2=rnd.uniform(0.98, 0.999999)
-    epsilon=abs(rnd.gauss(1e-8, 2e-08))
-    neuralNetwork = neural_network.MLPRegressor(hidden_layer_sizes=(40,40,40,40),
+    beta_1 = rnd.uniform(0.7, 0.99)
+    beta_2 = rnd.uniform(0.98, 0.999999)
+    epsilon = abs(rnd.gauss(1e-8, 2e-08))
+    neuralNetwork = neural_network.MLPRegressor(hidden_layer_sizes=(35,35,35,35),
                                                 activation='tanh',
                                                 solver='adam',
                                                 alpha=alpha,
@@ -100,7 +112,7 @@ for i in range(args.num):
                                                 warm_start=False,
                                                 # momentum=0.9, (sgd)
                                                 # nesterovs_momentum=True, (sgd)
-                                                early_stopping=True,
+                                                early_stopping=args.noEarlyStop,
                                                 validation_fraction=0.1,
                                                 # (adam)
                                                 beta_1=beta_1,
@@ -119,6 +131,7 @@ for i in range(args.num):
     out['beta_2'].append(beta_2)
     out['epsilon'].append(epsilon)
     out['loss'].append(neuralNetwork.loss_)
+    out['bestValidationScore'].append(neuralNetwork.best_validation_score_)
 
     if (i % 15 == 0):
         out = saveData(out)
