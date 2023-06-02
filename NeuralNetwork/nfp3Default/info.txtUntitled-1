@@ -1,0 +1,7 @@
+created with
+python3 NeuralNetwork/createNeuralNetwork.py -nfp 3 -v
+
+default parameter
+nfp = 3
+scan7clean.csv.zip
+earlyStopping=true
