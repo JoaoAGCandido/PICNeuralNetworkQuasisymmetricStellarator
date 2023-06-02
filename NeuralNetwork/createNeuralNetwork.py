@@ -6,7 +6,7 @@ import argparse
 
 
 parser = argparse.ArgumentParser(
-    description="Train a neural network\nexample:\npython3 NeuralNetwork/createNeuralNetwork.py --nfp=4 nn.pkl")
+    description="Train a neural network\nexample:\npython3 NeuralNetwork/createNeuralNetwork.py --nfp=4")
 parser.add_argument(
     "--nfp", help="Train neural networks for a specific nfp (2 to 8), default = all nfp", type=int, default=0, choices=range(2, 9))
 parser.add_argument("-v", "--verbose", action="store_true")
@@ -14,7 +14,7 @@ args = parser.parse_args()
 
 
 # Load and partition data
-df = pd.read_csv("scans/scan4/scan4.csv.zip")
+df = pd.read_csv("scans/scan7/scan7Clean.csv.zip")
 # select nfp
 if (args.nfp != 0):
     df = df[df['nfp'] == args.nfp]
@@ -30,11 +30,11 @@ y_scaled = y_scaler.transform(y)
 
 # Split training and testing sets
 X_train, X_test, y_train, y_test = \
-    train_test_split(X_scaled, y_scaled, test_size=0.3, train_size=0.7,
+    train_test_split(X_scaled, y_scaled, test_size=0.1, train_size=0.9,
                      random_state=0)
 
 # Setup regressors
-neuralNetwork = neural_network.MLPRegressor(hidden_layer_sizes=(20, 20, 20),
+neuralNetwork = neural_network.MLPRegressor(hidden_layer_sizes=(35,35,35,35),
                                             activation='tanh',
                                             solver='adam',
                                             alpha=0.0001,
@@ -50,7 +50,7 @@ neuralNetwork = neural_network.MLPRegressor(hidden_layer_sizes=(20, 20, 20),
                                             warm_start=False,
                                             #momentum=0.9, (sgd)
                                             #nesterovs_momentum=True, (sgd)
-                                            early_stopping=False,
+                                            early_stopping=True,
                                             validation_fraction=0.1,
                                             beta_1=0.9, #(adam)
                                             beta_2=0.999, #(adam)
@@ -60,6 +60,13 @@ neuralNetwork = neural_network.MLPRegressor(hidden_layer_sizes=(20, 20, 20),
 
 # Train
 neuralNetwork.fit(X_train, y_train)
+
+from sklearn.metrics import r2_score, mean_squared_error
+Y_NN = neuralNetwork.predict(X_test)
+print("r2: ", r2_score(y_test, Y_NN))
+print("mse: ", mean_squared_error(y_test, Y_NN))
+print("loss: ", neuralNetwork.loss_)  
+print("validationScore: ", neuralNetwork.best_validation_score_) 
 
 # save neural network and scalers
 joblib.dump(neuralNetwork, "NeuralNetwork/neuralNetwork.pkl")

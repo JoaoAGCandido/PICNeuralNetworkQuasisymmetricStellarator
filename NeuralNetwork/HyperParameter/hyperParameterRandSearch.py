@@ -48,7 +48,7 @@ def saveData(out):
 
 
 # Load and partition data
-df = pd.read_csv("scans/scan7/scan7.csv.zip")
+df = pd.read_csv("scans/scan7/scan7Clean.csv.zip")
 # select nfp
 if (args.nfp != 0):
     df = df[df['nfp'] == args.nfp]
@@ -64,7 +64,7 @@ y_scaled = y_scaler.transform(y)
 
 # Split training and testing sets
 X_train, X_test, y_train, y_test = \
-    train_test_split(X_scaled, y_scaled, test_size=0.3, train_size=0.7,
+    train_test_split(X_scaled, y_scaled, test_size=0.1, train_size=0.9,
                      random_state=0)
 
 # arrays to store output
@@ -100,7 +100,7 @@ for i in range(args.num):
                                                 warm_start=False,
                                                 # momentum=0.9, (sgd)
                                                 # nesterovs_momentum=True, (sgd)
-                                                early_stopping=False,
+                                                early_stopping=True,
                                                 validation_fraction=0.1,
                                                 # (adam)
                                                 beta_1=beta_1,
