@@ -1,0 +1,12 @@
+created with 
+python3 /marconi/home/userexternal/jcandido/PICNeuralNetworkQuasisymmetricStellarator/NeuralNetwork/HyperParameter/seedSearch.py 100 -v -ds="scans/scan7/scan7Clean.csv.zip" -f="test.csv"
+
+
+>>> dfAll.mean()
+loss                     0.013180
+bestValidationScore      0.974545
+dtype: float64
+>>> dfAll.std()
+loss                     0.000286
+bestValidationScore      0.001628
+dtype: float64
