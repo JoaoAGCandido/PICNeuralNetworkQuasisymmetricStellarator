@@ -1,0 +1,15 @@
+created with
+python3 NeuralNetwork/createNeuralNetwork.py -nfp 3 -v
+
+default parameter
+nfp = 3
+scan7clean.csv.zip
+earlyStopping=true
+
+test stats:
+r2:  0.9748646471888694
+mse:  0.02523255686928712
+
+training stats:
+loss:  0.013273970831454825
+validationScore:  0.9762772045418376
