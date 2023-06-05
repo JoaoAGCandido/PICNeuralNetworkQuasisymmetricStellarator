@@ -25,25 +25,30 @@ df = pd.read_csv(args.dataSet)
 # select nfp
 if (args.nfp != 0):
     df = df[df['nfp'] == args.nfp]
+    y = df.loc[:, ['rc1', 'zs1', 'eta']]
+else:
+    y = df.loc[:, ['nfp', 'rc1', 'zs1', 'eta']]
 
 X = df.loc[:, ['RotTrans', 'axLenght', 'max_elong']]
-X_scaler = preprocessing.StandardScaler()
-X_scaler.fit(X)
-X_scaled = X_scaler.transform(X)
 
-if (args.nfp == 0):
-    y = df.loc[:, ['nfp', 'rc1', 'zs1', 'eta']]
-else:
-    y = df.loc[:, ['rc1', 'zs1', 'eta']]
-y_scaler = preprocessing.StandardScaler()
-y_scaler.fit(y)
-y_scaled = y_scaler.transform(y)
 
 # Split training and testing sets
 X_train, X_test, y_train, y_test = \
-    train_test_split(X_scaled, y_scaled, test_size=0.1, train_size=0.9,
+    train_test_split(X, y, test_size=0.1, train_size=0.9,
                      random_state=0)
-print(X_train)
+
+#scale
+X_scaler = preprocessing.StandardScaler()
+X_scaler.fit(X_train)
+X_train_scaled = X_scaler.transform(X_train)
+X_test_scaled = X_scaler.transform(X_test)
+
+y_scaler = preprocessing.StandardScaler()
+y_scaler.fit(y_train)
+y_train_scaled = y_scaler.transform(y_train)
+y_test_scaled = y_scaler.transform(y_test)
+
+
 # Setup regressors
 neuralNetwork = neural_network.MLPRegressor(hidden_layer_sizes=(35, 35, 35, 35),
                                             activation='tanh',
@@ -70,14 +75,14 @@ neuralNetwork = neural_network.MLPRegressor(hidden_layer_sizes=(35, 35, 35, 35),
                                             )
 
 # Train
-neuralNetwork.fit(X_train, y_train)
+neuralNetwork.fit(X_train_scaled, y_train_scaled)
 
-Y_NN = neuralNetwork.predict(X_test)
+Y_NN = neuralNetwork.predict(X_test_scaled)
 if (args.verbose):
     print("\n\nFinal Results:")
     print("\ntest stats:")
-    print("r2: ", r2_score(y_test, Y_NN))
-    print("mse: ", mean_squared_error(y_test, Y_NN))
+    print("test r2: ", r2_score(y_test_scaled, Y_NN))
+    print("test mse: ", mean_squared_error(y_test_scaled, Y_NN))
     print("\ntraining stats:")
     print("loss: ", neuralNetwork.loss_)
     print("validationScore: ", neuralNetwork.best_validation_score_)

@@ -55,23 +55,28 @@ df = pd.read_csv(args.dataSet)
 # select nfp
 if (args.nfp != 0):
     df = df[df['nfp'] == args.nfp]
+    y = df.loc[:, ['rc1', 'zs1', 'eta']]
+else:
+    y = df.loc[:, ['nfp', 'rc1', 'zs1', 'eta']]
 
 X = df.loc[:, ['RotTrans', 'axLenght', 'max_elong']]
-X_scaler = preprocessing.StandardScaler()
-X_scaler.fit(X)
-X_scaled = X_scaler.transform(X)
-if (args.nfp == 0):
-    y = df.loc[:, ['nfp', 'rc1', 'zs1', 'eta']]
-else:
-    y = df.loc[:, ['rc1', 'zs1', 'eta']]
-y_scaler = preprocessing.StandardScaler()
-y_scaler.fit(y)
-y_scaled = y_scaler.transform(y)
+
 
 # Split training and testing sets
 X_train, X_test, y_train, y_test = \
-    train_test_split(X_scaled, y_scaled, test_size=0.1, train_size=0.9,
+    train_test_split(X, y, test_size=0.1, train_size=0.9,
                      random_state=0)
+
+#scale
+X_scaler = preprocessing.StandardScaler()
+X_scaler.fit(X_train)
+X_train_scaled = X_scaler.transform(X_train)
+X_test_scaled = X_scaler.transform(X_test)
+
+y_scaler = preprocessing.StandardScaler()
+y_scaler.fit(y_train)
+y_train_scaled = y_scaler.transform(y_train)
+y_test_scaled = y_scaler.transform(y_test)
 
 # arrays to store output
 out = {
