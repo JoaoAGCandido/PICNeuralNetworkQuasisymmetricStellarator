@@ -9,17 +9,30 @@ for dataSet in ["Dirty", "Clean"]:
         df = pd.read_csv("scan7/scan7Clean.csv.zip")
     else:
         df = pd.read_csv("scan7/scan7.csv.zip")
-        
+
     xFeat = 'axLenght'
-    #yFeat = 'RotTrans'
-    #yFeat = 'max_elong'
+    # yFeat = 'RotTrans'
+    # yFeat = 'max_elong'
+
+    # plot distribution of values for ax_lenght
+    # Create a histogram
+    plt.hist(df["axLenght"], bins=20, alpha=0.1, label="axLenght")
+
+    # Add labels and title
+    plt.xlabel("axLengt")
+    plt.ylabel('Frequency')
+    plt.title('Distribution of ' + "axLenght" + " " + dataSet)
+
+    # Show the histogram
+    plt.show()
+
     for yFeat in ['max_elong', 'RotTrans']:
         # using sublot for each color and to differentiate QA from QH
         fig, ax = plt.subplots()
 
         colors = ["", "red", "darkorange", "goldenrod", "green",
-                "darkgreen", "blue", "darkblue", "purple"]
-        
+                  "darkgreen", "blue", "darkblue", "purple"]
+
         for nfp in np.arange(8, 0, -1):
             newdf = df[df['nfp'] == nfp]
             # dataframe that stores QA stel with a certain nfp
@@ -29,18 +42,18 @@ for dataSet in ["Dirty", "Clean"]:
 
             # plot with color representing nfp and ^ marker representing Qh
             ax.scatter(dfQA[xFeat], dfQA[yFeat], c=colors[nfp], s=15,
-                    linewidths=0, edgecolors="black", label="{}".format(nfp) + " QA")
+                       linewidths=0, edgecolors="black", label="{}".format(nfp) + " QA")
             ax.scatter(dfQH[xFeat], dfQH[yFeat], c=colors[nfp], s=15,
-                    linewidths=0, edgecolors="black", label="{}".format(nfp) + " QH", marker='^')
+                       linewidths=0, edgecolors="black", label="{}".format(nfp) + " QH", marker='^')
 
         # plot labels, legend
         plt.xlabel(xFeat)
         plt.ylabel(yFeat)
         ax.legend()
-        #plt.ylim(0, 0.5)
+        # plt.ylim(0, 0.5)
         plt.title(yFeat + " " + dataSet)
         plt.savefig("Plots/" + yFeat + dataSet + ".png")
-        
+
         plt.show()
 
         # plot distribution of values
