@@ -17,6 +17,8 @@ parser.add_argument(
     "-es", "--noEarlyStop", help="Disable early_stopping", action="store_false")
 parser.add_argument("-v", "--verbose", action="store_true")
 parser.add_argument(
+    "-s", "--seed", help="Seed for neural network training, default = None", type=int, default=None)
+parser.add_argument(
     "-f", "--fileName", help="Name of the created file, ex \"NeuralNetwork/HyperParameter/hiddenLayerLoss.csv\"", type=str, default="NeuralNetwork/HyperParameter/hiddenLayerLoss.csv")
 args = parser.parse_args()
 
@@ -91,7 +93,7 @@ for layerSize in np.arange(15, 55, 5):
                                                     # power_t=0.5, (sgd)
                                                     max_iter=1000,
                                                     shuffle=True,
-                                                    random_state=None,
+                                                    random_state=args.seed,
                                                     tol=0.0001,
                                                     verbose=args.verbose,
                                                     warm_start=False,

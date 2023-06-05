@@ -22,6 +22,8 @@ parser.add_argument(
 parser.add_argument("-v", "--verbose", action="store_true",
                     help="Prints verbose including the predicted duration in seconds")
 parser.add_argument(
+    "-s", "--seed", help="Seed for neural network training, default = None", type=int, default=None)
+parser.add_argument(
     "-f", "--fileName", help="Name of the created file, ex \"NeuralNetwork/HyperParameter/randLoss.csv\"", type=str, default="NeuralNetwork/HyperParameter/randLoss.csv")
 args = parser.parse_args()
 
@@ -111,7 +113,7 @@ for i in range(args.num):
                                                 # power_t=0.5, (sgd)
                                                 max_iter=1000,
                                                 shuffle=True,
-                                                random_state=None,
+                                                random_state=args.seed,
                                                 tol=0.0001,
                                                 verbose=False,
                                                 warm_start=False,

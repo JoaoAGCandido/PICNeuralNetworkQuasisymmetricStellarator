@@ -17,6 +17,8 @@ parser.add_argument(
 parser.add_argument("-v", "--verbose", action="store_true")
 parser.add_argument(
     "-f", "--fileName", help="Name of the created files, ex \"NeuralNetwork/neuralNetwork\"", type=str, default="NeuralNetwork/neuralNetwork")
+parser.add_argument(
+    "-s", "--seed", help="Seed for neural network training, default = None", type=int, default=None)
 args = parser.parse_args()
 
 
@@ -60,7 +62,7 @@ neuralNetwork = neural_network.MLPRegressor(hidden_layer_sizes=(35, 35, 35, 35),
                                             # power_t=0.5, (sgd)
                                             max_iter=1000,
                                             shuffle=True,
-                                            random_state=None,
+                                            random_state=args.seed,
                                             tol=0.0001,
                                             verbose=args.verbose,
                                             warm_start=False,
