@@ -10,13 +10,13 @@ import joblib
 
 
 parser = argparse.ArgumentParser(
-    description="Returns a csv with various losses from neural networks with random hyper parameters\nexample:\npython3 NeuralNetwork/HyperParameter/hyperParameterRandSearch.py -num=10 -v -nfp=3 -hp=\"activation\" -ds=\"scans/scan7/scan7Clean.csv.zip\" -f=\"NeuralNetwork/HyperParameter/randSearch.pkl\"")
+    description="Returns a pkl with parameters optimization using sklearn.model_selection.RandomizedSearchCV\nexample:\npython3 NeuralNetwork/HyperParameter/hyperParameterRandSearch.py -num=10 -v -nfp=3 -hp=\"activation\" -ds=\"scans/scan7/scan7Clean.csv.zip\" -f=\"NeuralNetwork/HyperParameter/randSearch.pkl\"")
 parser.add_argument(
     "-num", help="Number of parameter settings that are sampled. n_iter trades off runtime vs quality of the solution.", type=int, default=10)
 parser.add_argument(
     "-nfp", "--nfp", help="Train neural networks for a specific nfp (1 to 8), default = 0 (all nfp)", type=int, default=0, choices=range(0, 9))
 parser.add_argument(
-    "-hp", "--hyperParameter", help="hyperparameter to optimize, \"all\" fixes activation to tanh", type=str, choices=["batch_size", "alpha", "learning_rate_init", "activation", "hiddenLayer", "all"])
+    "-hp", "--hyperParameter", help="hyperparameter to optimize, \"all\" fixes activation to tanh", type=str, choices=["batch_size", "alpha", "learning_rate_init", "activation", "hiddenLayer", "all"], default="all")
 parser.add_argument(
     "-ds", "--dataSet", help="Data set to train Network with, default=\"scans/scan7/scan7Clean.csv.zip\"", type=str, default="scans/scan7/scan7Clean.csv.zip")
 parser.add_argument(
