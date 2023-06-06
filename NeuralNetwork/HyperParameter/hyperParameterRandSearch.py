@@ -5,7 +5,6 @@ import scipy.stats
 import argparse
 import os
 import time
-import numpy as np
 import datetime
 import joblib
 
@@ -27,27 +26,6 @@ parser.add_argument("-v", "--verbose", action="store_true",
 parser.add_argument(
     "-f", "--fileName", help="Name of the created file, ex \"NeuralNetwork/HyperParameter/randSearch.pkl\"", type=str, default="NeuralNetwork/HyperParameter/randSearch.pkl")
 args = parser.parse_args()
-
-
-def saveData(out):
-    df = pd.DataFrame(out)
-    file_exists = os.path.isfile(args.fileName)
-    df.sort_values("bestValidationScore", ascending=True)
-    if file_exists:
-        df.to_csv(args.fileName, index=False, header=False, mode="a")
-    else:
-        df.to_csv(args.fileName, index=False)
-    # clear out
-    out = {
-        'alpha': [],
-        'learning_rate_init': [],
-        'beta_1': [],
-        'beta_2': [],
-        'epsilon': [],
-        'loss': [],
-        'bestValidationScore': []
-    }
-    return out
 
 
 # Load and partition data
@@ -77,17 +55,6 @@ y_scaler = preprocessing.StandardScaler()
 y_scaler.fit(y_train)
 y_train_scaled = y_scaler.transform(y_train)
 y_test_scaled = y_scaler.transform(y_test)
-
-# arrays to store output
-out = {
-    'alpha': [],
-    'learning_rate_init': [],
-    'beta_1': [],
-    'beta_2': [],
-    'epsilon': [],
-    'loss': [],
-    'bestValidationScore': []
-}
 
 
 startTime = time.time()
@@ -146,12 +113,16 @@ elif args.hyperParameter == "hiddenLayer":
             hidden_layer_sizes=hiddenLayerList,
         )
 elif args.hyperParameter == "all":
-    hiddenLayerList = []
-    for layerSize in np.arange(15, 55, 5):
-        hiddenLayerSize = [layerSize]
-        for numLayers in range(4):
-            hiddenLayerSize.append(layerSize)
-            hiddenLayerList.append(str(hiddenLayerSize))
+    hiddenLayerList = [
+        [15, 15], [15, 15, 15], [15, 15, 15, 15], [15, 15, 15, 15, 15],
+        [20, 20], [20, 20, 20], [20, 20, 20, 20], [20, 20, 20, 20, 20],
+        [25, 25], [25, 25, 25], [25, 25, 25, 25], [25, 25, 25, 25, 25],
+        [30, 30], [30, 30, 30], [30, 30, 30, 30], [30, 30, 30, 30, 30],
+        [35, 35], [35, 35, 35], [35, 35, 35, 35], [35, 35, 35, 35, 35], 
+        [40, 40], [40, 40, 40], [40, 40, 40, 40], [40, 40, 40, 40, 40], 
+        [45, 45], [45, 45, 45], [45, 45, 45, 45], [45, 45, 45, 45, 45], 
+        [50, 50], [50, 50, 50], [50, 50, 50, 50], [50, 50, 50, 50, 50],
+    ]
     distributions = dict(
         batch_size=range(20, 200),
         alpha=scipy.stats.uniform(0.00001, 0.0005),
