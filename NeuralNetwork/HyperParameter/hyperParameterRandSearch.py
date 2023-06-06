@@ -128,7 +128,7 @@ elif args.hyperParameter == "learning_rate_init":
     )
 elif args.hyperParameter == "activation":
     distributions = dict(
-        alpha=["identity", "logistic", "tanh", "relu"],
+        activation=["identity", "logistic", "tanh", "relu"],
     )
 
 clf = RandomizedSearchCV(neuralNetwork, distributions, random_state=0, verbose=args.verbose, n_jobs=-1, n_iter=args.num)
