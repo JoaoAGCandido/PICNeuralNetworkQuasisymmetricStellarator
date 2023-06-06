@@ -131,9 +131,12 @@ elif args.hyperParameter == "all":
         [44, 44, 44], [44, 44, 44, 44],
         [45, 45, 45], [45, 45, 45, 45],
     ]
+    alphaLoc=0.0001
+    alphaScale=0.00005
+    a, b = (0 - alphaLoc) / alphaScale, (0.0505 - alphaLoc) / alphaScale
     distributions = dict(
         batch_size=range(50, 150),
-        alpha=abs(scipy.stats.norm(0.0001, 0.00005)),
+        alpha=scipy.stats.truncnorm(loc=alphaLoc, scale=alphaScale, a=a, b=b),
         learning_rate_init=scipy.stats.norm(0.001, 0.0002),
         hidden_layer_sizes=hiddenLayerList,
     )
