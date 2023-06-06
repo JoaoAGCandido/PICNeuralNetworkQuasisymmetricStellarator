@@ -13,3 +13,8 @@ mse:  0.02523255686928712
 training stats:
 loss:  0.013273970831454825
 validationScore:  0.9762772045418376
+
+
+=======================================================================================
+NeuralNetwork/nfp3/hiddenLayerLoss.csv made by run the following 20 times:
+python3 /marconi/home/userexternal/jcandido/PICNeuralNetworkQuasisymmetricStellarator/NeuralNetwork/HyperParameter/hiddenLayerSizeSearch.py -v -nfp=3 -ds="scans/scan7/scan7Clean.csv.zip" -f="NeuralNetwork/nfp3/hiddenLayerLoss.csv"
