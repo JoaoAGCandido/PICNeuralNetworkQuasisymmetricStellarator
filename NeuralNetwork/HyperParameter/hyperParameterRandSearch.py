@@ -5,15 +5,15 @@ import scipy.stats
 import argparse
 import numpy as np
 import os
-import random as rnd
 import time
 import datetime
+import joblib
 
 
 parser = argparse.ArgumentParser(
-    description="Returns a csv with various losses from neural networks with random hyper parameters\nexample:\npython3 NeuralNetwork/HyperParameter/hyperParameterRandSearch.py 500 -v -nfp=3 -ds=\"scans/scan7/scan7.csv.zip\" -f=\"NeuralNetwork/HyperParameter/randLoss.csv\"")
+    description="Returns a csv with various losses from neural networks with random hyper parameters\nexample:\npython3 NeuralNetwork/HyperParameter/hyperParameterRandSearch.py -num=10 -v -nfp=3 -ds=\"scans/scan7/scan7Clean.csv.zip\" -f=\"NeuralNetwork/HyperParameter/randSearch.pkl\"")
 parser.add_argument(
-    "num", help="Number of scans", type=int)
+    "-num", help="Number of parameter settings that are sampled. n_iter trades off runtime vs quality of the solution.", type=int, default=10)
 parser.add_argument(
     "-nfp", "--nfp", help="Train neural networks for a specific nfp (1 to 8), default = 0 (all nfp)", type=int, default=0, choices=range(0, 9))
 parser.add_argument(
@@ -117,12 +117,13 @@ distributions = dict(
     batch_size=range(20, 200),
 )
 
-clf = RandomizedSearchCV(neuralNetwork, distributions, random_state=0, verbose=args.verbose)
+clf = RandomizedSearchCV(neuralNetwork, distributions, random_state=0, verbose=args.verbose, n_jobs=-1)
 search = clf.fit(X_train_scaled, y_train_scaled)
+joblib.dump(neuralNetwork, args.fileName)
 
-#saveData(out)
 endTime = time.time() - startTime
 if args.verbose:
-    print(search)
-    print(search.best_params_)
+    print("\nsearch:\n", search)
+    print("\nbest_params: ", search.best_params_)
+    print("\ncv_results: ", search.cv_results_)
     print("\nEnd Time: ", str(datetime.timedelta(seconds=int(endTime))))
