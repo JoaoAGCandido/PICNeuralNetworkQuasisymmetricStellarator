@@ -88,7 +88,7 @@ if args.hyperParameter == "batch_size":
     )
 elif args.hyperParameter == "alpha":
     distributions = dict(
-        alpha=scipy.stats.uniform(0.00001, 0.0005),
+        alpha=scipy.stats.uniform(0.00001, 0.0002),
     )
 elif args.hyperParameter == "learning_rate_init":
     distributions = dict(
