@@ -93,7 +93,7 @@ neuralNetwork = neural_network.MLPRegressor(hidden_layer_sizes=(35,35,35),
                                             activation='tanh',
                                             solver='adam',
                                             alpha=0.0001,
-                                            batch_size='auto',
+                                            batch_size=90,#'auto',
                                             # learning_rate='constant', (sgd)
                                             learning_rate_init=0.001,
                                             # power_t=0.5, (sgd)
@@ -113,10 +113,15 @@ neuralNetwork = neural_network.MLPRegressor(hidden_layer_sizes=(35,35,35),
                                             n_iter_no_change=10,
                                             )
 
+"""
+#batchsize 1st optimization
 distributions = dict(
     batch_size=range(20, 200),
 )
-
+"""
+distributions = dict(
+    alpha=scipy.stats.uniform(0.00001, 0.0005),
+)
 clf = RandomizedSearchCV(neuralNetwork, distributions, random_state=0, verbose=args.verbose, n_jobs=-1)
 search = clf.fit(X_train_scaled, y_train_scaled)
 joblib.dump(neuralNetwork, args.fileName)
@@ -125,5 +130,5 @@ endTime = time.time() - startTime
 if args.verbose:
     print("\nsearch:\n", search)
     print("\nbest_params: ", search.best_params_)
-    print("\ncv_results: ", search.cv_results_)
+    print("\ncv_results:\n", search.cv_results_)
     print("\nEnd Time: ", str(datetime.timedelta(seconds=int(endTime))))
