@@ -1,6 +1,7 @@
 import pandas as pd
 from sklearn import neural_network, preprocessing
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, RandomizedSearchCV
+import scipy.stats
 import argparse
 import numpy as np
 import os
@@ -22,17 +23,8 @@ parser.add_argument(
 parser.add_argument("-v", "--verbose", action="store_true",
                     help="Prints verbose including the predicted duration in seconds")
 parser.add_argument(
-    "-s", "--seed", help="Seed for neural network training, default = None", type=int, default=None)
-parser.add_argument(
-    "-f", "--fileName", help="Name of the created file, ex \"NeuralNetwork/HyperParameter/randLoss.csv\"", type=str, default="NeuralNetwork/HyperParameter/randLoss.csv")
+    "-f", "--fileName", help="Name of the created file, ex \"NeuralNetwork/HyperParameter/randSearch.pkl\"", type=str, default="NeuralNetwork/HyperParameter/randSearch.pkl")
 args = parser.parse_args()
-
-
-def estimatedTime():
-    estimatedTime = (time.time() - startTime) / 10 * args.num
-    if args.verbose:
-        print("Estimated time: ", str(
-            datetime.timedelta(seconds=int(estimatedTime))))
 
 
 def saveData(out):
@@ -97,57 +89,40 @@ out = {
 
 
 startTime = time.time()
-for i in range(args.num):
-    alpha = abs(rnd.gauss(0.0001, 0.0002))
-    learning_rate_init = abs(rnd.gauss(0.001, 0.002))
-    beta_1 = rnd.uniform(0.7, 0.99)
-    beta_2 = rnd.uniform(0.98, 0.999999)
-    epsilon = abs(rnd.gauss(1e-8, 2e-08))
-    neuralNetwork = neural_network.MLPRegressor(hidden_layer_sizes=(35,35,35,35),
-                                                activation='tanh',
-                                                solver='adam',
-                                                alpha=alpha,
-                                                batch_size='auto',
-                                                # learning_rate='constant', (sgd)
-                                                learning_rate_init=learning_rate_init,
-                                                # power_t=0.5, (sgd)
-                                                max_iter=1000,
-                                                shuffle=True,
-                                                random_state=args.seed,
-                                                tol=0.0001,
-                                                verbose=False,
-                                                warm_start=False,
-                                                # momentum=0.9, (sgd)
-                                                # nesterovs_momentum=True, (sgd)
-                                                early_stopping=args.noEarlyStop,
-                                                validation_fraction=0.1,
-                                                # (adam)
-                                                beta_1=beta_1,
-                                                # (adam)
-                                                beta_2=beta_2,
-                                                # (adam)
-                                                epsilon=epsilon,
-                                                n_iter_no_change=10,
-                                                )
+neuralNetwork = neural_network.MLPRegressor(hidden_layer_sizes=(35,35,35),
+                                            activation='tanh',
+                                            solver='adam',
+                                            alpha=0.0001,
+                                            batch_size='auto',
+                                            # learning_rate='constant', (sgd)
+                                            learning_rate_init=0.001,
+                                            # power_t=0.5, (sgd)
+                                            max_iter=1000,
+                                            shuffle=True,
+                                            random_state=0,
+                                            tol=0.0001,
+                                            verbose=args.verbose,
+                                            warm_start=False,
+                                            # momentum=0.9, (sgd)
+                                            # nesterovs_momentum=True, (sgd)
+                                            early_stopping=args.noEarlyStop,
+                                            validation_fraction=0.1,
+                                            beta_1=0.9,  # (adam)
+                                            beta_2=0.999,  # (adam)
+                                            epsilon=1e-08,  # (adam)
+                                            n_iter_no_change=10,
+                                            )
 
-    # Train
-    neuralNetwork.fit(X_train, y_train)
-    out['alpha'].append(alpha)
-    out['learning_rate_init'].append(learning_rate_init)
-    out['beta_1'].append(beta_1)
-    out['beta_2'].append(beta_2)
-    out['epsilon'].append(epsilon)
-    out['loss'].append(neuralNetwork.loss_)
-    out['bestValidationScore'].append(neuralNetwork.best_validation_score_)
+distributions = dict(
+    batch_size=range(20, 200),
+)
 
-    if (i % 15 == 0):
-        out = saveData(out)
+clf = RandomizedSearchCV(neuralNetwork, distributions, random_state=0, verbose=args.verbose)
+search = clf.fit(X_train_scaled, y_train_scaled)
 
-    if (i == 9):
-        estimatedTime()
-
-
-saveData(out)
+#saveData(out)
 endTime = time.time() - startTime
 if args.verbose:
+    print(search)
+    print(search.best_params_)
     print("\nEnd Time: ", str(datetime.timedelta(seconds=int(endTime))))
