@@ -133,7 +133,7 @@ elif args.hyperParameter == "activation":
 
 clf = RandomizedSearchCV(neuralNetwork, distributions, random_state=0, verbose=args.verbose, n_jobs=-1, n_iter=args.num)
 search = clf.fit(X_train_scaled, y_train_scaled)
-joblib.dump(neuralNetwork, args.fileName)
+joblib.dump(search, args.fileName)
 
 endTime = time.time() - startTime
 if args.verbose:
