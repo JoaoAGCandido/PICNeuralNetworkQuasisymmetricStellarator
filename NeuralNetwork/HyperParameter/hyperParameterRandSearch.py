@@ -16,7 +16,7 @@ parser.add_argument(
 parser.add_argument(
     "-nfp", "--nfp", help="Train neural networks for a specific nfp (1 to 8), default = 0 (all nfp)", type=int, default=0, choices=range(0, 9))
 parser.add_argument(
-    "-hp", "--hyperParameter", help="hyperparameter to optimize", type=float, choices=["batch_size", "alpha", "learning_rate_init", "activation"])
+    "-hp", "--hyperParameter", help="hyperparameter to optimize", type="string", choices=["batch_size", "alpha", "learning_rate_init", "activation"])
 parser.add_argument(
     "-ds", "--dataSet", help="Data set to train Network with, default=\"scans/scan7/scan7Clean.csv.zip\"", type=str, default="scans/scan7/scan7Clean.csv.zip")
 parser.add_argument(
