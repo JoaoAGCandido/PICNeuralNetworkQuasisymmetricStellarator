@@ -3,7 +3,6 @@ from sklearn import neural_network, preprocessing
 from sklearn.model_selection import train_test_split, RandomizedSearchCV
 import scipy.stats
 import argparse
-import numpy as np
 import os
 import time
 import datetime
@@ -11,11 +10,13 @@ import joblib
 
 
 parser = argparse.ArgumentParser(
-    description="Returns a csv with various losses from neural networks with random hyper parameters\nexample:\npython3 NeuralNetwork/HyperParameter/hyperParameterRandSearch.py -num=10 -v -nfp=3 -ds=\"scans/scan7/scan7Clean.csv.zip\" -f=\"NeuralNetwork/HyperParameter/randSearch.pkl\"")
+    description="Returns a csv with various losses from neural networks with random hyper parameters\nexample:\npython3 NeuralNetwork/HyperParameter/hyperParameterRandSearch.py -num=10 -v -nfp=3 -hp=\"activation\" -ds=\"scans/scan7/scan7Clean.csv.zip\" -f=\"NeuralNetwork/HyperParameter/randSearch.pkl\"")
 parser.add_argument(
     "-num", help="Number of parameter settings that are sampled. n_iter trades off runtime vs quality of the solution.", type=int, default=10)
 parser.add_argument(
     "-nfp", "--nfp", help="Train neural networks for a specific nfp (1 to 8), default = 0 (all nfp)", type=int, default=0, choices=range(0, 9))
+parser.add_argument(
+    "-hp", "--hyperParameter", help="hyperparameter to optimize", type=float, choices=["batch_size", "alpha", "learning_rate_init", "activation"])
 parser.add_argument(
     "-ds", "--dataSet", help="Data set to train Network with, default=\"scans/scan7/scan7Clean.csv.zip\"", type=str, default="scans/scan7/scan7Clean.csv.zip")
 parser.add_argument(
@@ -113,16 +114,24 @@ neuralNetwork = neural_network.MLPRegressor(hidden_layer_sizes=(35,35,35),
                                             n_iter_no_change=10,
                                             )
 
-"""
-#batchsize 1st optimization
-distributions = dict(
-    batch_size=range(20, 200),
-)
-"""
-distributions = dict(
-    alpha=scipy.stats.uniform(0.00001, 0.0005),
-)
-clf = RandomizedSearchCV(neuralNetwork, distributions, random_state=0, verbose=args.verbose, n_jobs=-1)
+if args.hyperParameter == "batch_size":
+    distributions = dict(
+        batch_size=range(20, 200),
+    )
+elif args.hyperParameter == "alpha":
+    distributions = dict(
+        alpha=scipy.stats.uniform(0.00001, 0.0005),
+    )
+elif args.hyperParameter == "learning_rate_init":
+    distributions = dict(
+        learning_rate_init=scipy.stats.uniform(0.0001, 0.005),
+    )
+elif args.hyperParameter == "activation":
+    distributions = dict(
+        alpha=["identity", "logistic", "tanh", "relu"],
+    )
+
+clf = RandomizedSearchCV(neuralNetwork, distributions, random_state=0, verbose=args.verbose, n_jobs=-1, n_iter=args.num)
 search = clf.fit(X_train_scaled, y_train_scaled)
 joblib.dump(neuralNetwork, args.fileName)
 
