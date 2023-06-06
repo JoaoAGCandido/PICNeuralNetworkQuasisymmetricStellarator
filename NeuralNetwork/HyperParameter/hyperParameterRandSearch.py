@@ -5,6 +5,7 @@ import scipy.stats
 import argparse
 import os
 import time
+import numpy as np
 import datetime
 import joblib
 
@@ -16,7 +17,7 @@ parser.add_argument(
 parser.add_argument(
     "-nfp", "--nfp", help="Train neural networks for a specific nfp (1 to 8), default = 0 (all nfp)", type=int, default=0, choices=range(0, 9))
 parser.add_argument(
-    "-hp", "--hyperParameter", help="hyperparameter to optimize", type=str, choices=["batch_size", "alpha", "learning_rate_init", "activation"])
+    "-hp", "--hyperParameter", help="hyperparameter to optimize, \"all\" fixes activation to tanh", type=str, choices=["batch_size", "alpha", "learning_rate_init", "activation", "hiddenLayer", "all"])
 parser.add_argument(
     "-ds", "--dataSet", help="Data set to train Network with, default=\"scans/scan7/scan7Clean.csv.zip\"", type=str, default="scans/scan7/scan7Clean.csv.zip")
 parser.add_argument(
@@ -66,7 +67,7 @@ X_train, X_test, y_train, y_test = \
     train_test_split(X, y, test_size=0.1, train_size=0.9,
                      random_state=0)
 
-#scale
+# scale
 X_scaler = preprocessing.StandardScaler()
 X_scaler.fit(X_train)
 X_train_scaled = X_scaler.transform(X_train)
@@ -90,11 +91,11 @@ out = {
 
 
 startTime = time.time()
-neuralNetwork = neural_network.MLPRegressor(hidden_layer_sizes=(35,35,35),
+neuralNetwork = neural_network.MLPRegressor(hidden_layer_sizes=(35, 35, 35),
                                             activation='tanh',
                                             solver='adam',
                                             alpha=0.0001,
-                                            batch_size=90,#'auto',
+                                            batch_size=90,  # 'auto',
                                             # learning_rate='constant', (sgd)
                                             learning_rate_init=0.001,
                                             # power_t=0.5, (sgd)
@@ -102,7 +103,7 @@ neuralNetwork = neural_network.MLPRegressor(hidden_layer_sizes=(35,35,35),
                                             shuffle=True,
                                             random_state=0,
                                             tol=0.0001,
-                                            verbose=args.verbose,
+                                            verbose=False,
                                             warm_start=False,
                                             # momentum=0.9, (sgd)
                                             # nesterovs_momentum=True, (sgd)
@@ -130,8 +131,36 @@ elif args.hyperParameter == "activation":
     distributions = dict(
         activation=["identity", "logistic", "tanh", "relu"],
     )
+elif args.hyperParameter == "hiddenLayer":
+        hiddenLayerList = [
+            [15, 15], [15, 15, 15], [15, 15, 15, 15], [15, 15, 15, 15, 15],
+            [20, 20], [20, 20, 20], [20, 20, 20, 20], [20, 20, 20, 20, 20],
+            [25, 25], [25, 25, 25], [25, 25, 25, 25], [25, 25, 25, 25, 25],
+            [30, 30], [30, 30, 30], [30, 30, 30, 30], [30, 30, 30, 30, 30],
+            [35, 35], [35, 35, 35], [35, 35, 35, 35], [35, 35, 35, 35, 35], 
+            [40, 40], [40, 40, 40], [40, 40, 40, 40], [40, 40, 40, 40, 40], 
+            [45, 45], [45, 45, 45], [45, 45, 45, 45], [45, 45, 45, 45, 45], 
+            [50, 50], [50, 50, 50], [50, 50, 50, 50], [50, 50, 50, 50, 50],
+        ]
+        distributions = dict(
+            hidden_layer_sizes=hiddenLayerList,
+        )
+elif args.hyperParameter == "all":
+    hiddenLayerList = []
+    for layerSize in np.arange(15, 55, 5):
+        hiddenLayerSize = [layerSize]
+        for numLayers in range(4):
+            hiddenLayerSize.append(layerSize)
+            hiddenLayerList.append(str(hiddenLayerSize))
+    distributions = dict(
+        batch_size=range(20, 200),
+        alpha=scipy.stats.uniform(0.00001, 0.0005),
+        learning_rate_init=scipy.stats.uniform(0.0001, 0.005),
+        hidden_layer_sizes=hiddenLayerList,
+    )
 
-clf = RandomizedSearchCV(neuralNetwork, distributions, random_state=0, verbose=args.verbose, n_jobs=-1, n_iter=args.num)
+clf = RandomizedSearchCV(neuralNetwork, distributions, random_state=0,
+                         verbose=args.verbose, n_jobs=-1, n_iter=args.num)
 search = clf.fit(X_train_scaled, y_train_scaled)
 joblib.dump(search, args.fileName)
 
