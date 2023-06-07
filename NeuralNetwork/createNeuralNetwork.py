@@ -41,18 +41,20 @@ X_train, X_test, y_train, y_test = \
 
 #scale
 X_scaler = preprocessing.StandardScaler()
+#X_scaler = preprocessing.RobustScaler()
 X_scaler.fit(X_train)
 X_train_scaled = X_scaler.transform(X_train)
 X_test_scaled = X_scaler.transform(X_test)
 
 y_scaler = preprocessing.StandardScaler()
+#y_scaler = preprocessing.RobustScaler()
 y_scaler.fit(y_train)
 y_train_scaled = y_scaler.transform(y_train)
 y_test_scaled = y_scaler.transform(y_test)
 
 
 # Setup regressors
-neuralNetwork = neural_network.MLPRegressor(hidden_layer_sizes=(35, 35, 35, 35),
+neuralNetwork = neural_network.MLPRegressor(hidden_layer_sizes=(35, 35, 35),
                                             activation='tanh',
                                             solver='adam',
                                             alpha=0.0001,
