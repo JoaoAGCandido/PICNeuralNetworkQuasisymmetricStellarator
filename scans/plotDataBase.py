@@ -47,11 +47,16 @@ for dataSet in ["Dirty", "Clean"]:
                        linewidths=0, edgecolors="black", label="{}".format(nfp) + " QH", marker='^')
 
         # plot labels, legend
-        plt.xlabel(xFeat)
-        plt.ylabel(yFeat)
+        if xFeat=="axLenght":
+            plt.xlabel("Axis Lenght")
+        if yFeat=="max_elong":
+            plt.ylabel("Max Elongation")
+            plt.title("Max Elongation " + dataSet + " Dataset")
+        if yFeat=="RotTrans":
+            plt.ylabel("Rotational Transform")
+            plt.title("Rotational Transform " + dataSet + " Dataset")
         ax.legend()
         # plt.ylim(0, 0.5)
-        plt.title(yFeat + " " + dataSet)
         plt.savefig("Plots/" + yFeat + dataSet + ".png")
 
         plt.show()
