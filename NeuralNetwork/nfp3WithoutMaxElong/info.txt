@@ -1,0 +1,17 @@
+created with
+python3 NeuralNetwork/createNeuralNetwork.py -v -nfp=3 -s=0 -f="NeuralNetwork/nfp3WithoutMaxElong/neuralNetwork"
+
+default parameter
+Without max_elong
+hidden_layer_sizes(35,35,35)
+nfp = 3
+scan7clean.csv.zip
+earlyStopping=true
+
+test stats:
+test r2:  0.9266383534141243
+test mse:  0.07335802868317803
+
+training stats:
+loss:  0.03668410827593199
+validationScore:  0.9319803530857463
