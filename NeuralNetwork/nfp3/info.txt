@@ -1,2 +1,7 @@
 NeuralNetwork/nfp3/hiddenLayerLoss.csv created with:
 python3 /marconi/home/userexternal/jcandido/PICNeuralNetworkQuasisymmetricStellarator/NeuralNetwork/HyperParameter/hiddenLayerSizeSearch.py -v -nfp=3 -s=0 -ds="scans/scan7/scan7Clean.csv.zip" -f="NeuralNetwork/nfp3/hiddenLayerLoss.csv"
+
+NeuralNetwork constructed with
+python3 NeuralNetwork/createNeuralNetwork.py -v -nfp=3 -s=0 -f="NeuralNetwork/nfp3/neuralNetwork"
+hyperparameters from NeuralNetwork/HyperParameter/nfp3/allHp2.pkl
+best parameter:  {'alpha': 7.910723593282952e-05, 'batch_size': 87, 'hidden_layer_sizes': [45, 45, 45, 45], 'learning_rate_init': 0.0009269282149794735}
