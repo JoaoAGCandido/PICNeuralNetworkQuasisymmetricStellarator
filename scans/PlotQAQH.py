@@ -74,27 +74,35 @@ for nfp in np.arange(1, 9, 1):
     dfWrongQH = dfCorrectedQH[dfCorrectedQH['heli'] == True]
     dfCorrectedQH = dfCorrectedQH[dfCorrectedQH['heli'] == False]
 
+
+    #dont plot repeated points
+    dfQA = dfQA[dfQA["rc1"] < delta]
+    dfQH = dfQH[dfQH["rc1"] > delta]
+
+
     # theoric divisory line between QA and QH
     plt.axline([delta, 0], [delta, -0.3], color='black')
     # plot with color representing nfp and ^ marker representing Qh
+    marquerSize = 20 #15
+    line = 0.5
     if (len(dfQA.index)):
-        ax.scatter(dfQA['rc1'], dfQA['zs1'], c=colorsQA[3], s=15,
-                   linewidths=0, edgecolors="black", label="{}".format(nfp) + " QA")
+        ax.scatter(dfQA['rc1'], dfQA['zs1'], c=colorsQA[3], s=marquerSize,
+                   linewidths=line, edgecolors="black", label="{}".format(nfp) + " QA")
     if (len(dfQH.index)):
-        ax.scatter(dfQH['rc1'], dfQH['zs1'], c=colors[3], s=15, linewidths=0,
+        ax.scatter(dfQH['rc1'], dfQH['zs1'], c=colors[3], s=marquerSize, linewidths=line,
                    edgecolors="black", label="{}".format(nfp) + " QH", marker='^')
     if (len(dfWrongQA.index)):
         ax.scatter(dfWrongQA['rc1'], dfWrongQA['zs1'], c="red",
-                   s=15, linewidths=0, edgecolors="black", label="Incorrect")
+                   s=marquerSize, linewidths=line, edgecolors="black", label="Incorrect")
     if (len(dfCorrectedQA.index)):
-        ax.scatter(dfCorrectedQA['rc1'], dfCorrectedQA['zs1'], c="green", s=15,
-                   linewidths=0, edgecolors="black", label="Corrected", marker='^')
+        ax.scatter(dfCorrectedQA['rc1'], dfCorrectedQA['zs1'], c="forestgreen", s=marquerSize,
+                   linewidths=line, edgecolors="black", label="Corrected", marker='^')
     if (len(dfWrongQH.index)):
-        ax.scatter(dfWrongQH['rc1'], dfWrongQH['zs1'], c="red", s=15,
-                   linewidths=0, edgecolors="black", label="Incorrect", marker='^')
+        ax.scatter(dfWrongQH['rc1'], dfWrongQH['zs1'], c="red", s=marquerSize,
+                   linewidths=line, edgecolors="black", label="Incorrect", marker='^')
     if (len(dfCorrectedQH.index)):
-        ax.scatter(dfCorrectedQH['rc1'], dfCorrectedQH['zs1'], c="green",
-                   s=15, linewidths=0, edgecolors="black", label="Corrected")
+        ax.scatter(dfCorrectedQH['rc1'], dfCorrectedQH['zs1'], c="forestgreen",
+                   s=marquerSize, linewidths=line, edgecolors="black", label="Corrected")
 
     # plot labels, legend...
     plt.xlim(delta-0.0005, delta+0.0005)
