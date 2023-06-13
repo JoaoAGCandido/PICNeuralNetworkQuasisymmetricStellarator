@@ -6,7 +6,7 @@ import pandas as pd
 df = pd.read_csv("scans/scan7/scan7Clean.csv.zip")
 df = df[df['rc1'] != 0]
 df = df[df['zs1'] != 0]
-#df = df.sample(frac=0.05)
+#df = df.sample(frac=0.1)
 
 
 out = {
