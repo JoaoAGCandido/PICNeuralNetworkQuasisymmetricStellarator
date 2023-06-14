@@ -51,9 +51,9 @@ out={
 
 #for i in range(2, 20):
 #model = make_pipeline(preprocessing.SplineTransformer(n_knots=100, degree=100, extrapolation = "continue"), Ridge(alpha=1e-3))
-model = make_pipeline(preprocessing.PolynomialFeatures(degree=12), LinearRegression())
+#model = make_pipeline(preprocessing.PolynomialFeatures(degree=12), LinearRegression())
 #model = Ridge(alpha=1)
-#model = LinearRegression()
+model = LinearRegression()
 model.fit(X_train_scaled, y_train_scaled)
 
 test_predictions = model.predict(X_test_scaled)
@@ -73,9 +73,9 @@ print("mse: ", mean_squared_error(y_validation_scaled, validation_predictions))
 #print(df.sort_values("R2_validation"))
 fig, ax = plt.subplots()
 
-ax.scatter(test_predictions[:,2],y_test_scaled[:,2], c="blue", label="rc1",s=2)
-ax.scatter(test_predictions[:,0],y_test_scaled[:,0], c="orange", label="zs1", s=2)
-ax.scatter(test_predictions[:,1],y_test_scaled[:,1], c="green", label="eta", s=2)
+ax.scatter(test_predictions[:,2],y_test_scaled[:,2], c="blue", label="eta",s=2)
+ax.scatter(test_predictions[:,0],y_test_scaled[:,0], c="orange", label="rc1", s=2)
+ax.scatter(test_predictions[:,1],y_test_scaled[:,1], c="green", label="zs1", s=2)
 
 plt.axline([0, 0], [1, 1], color='red')
 plt.ylim(-3, 3)
