@@ -51,7 +51,7 @@ out={
 
 #for i in range(2, 20):
 #model = make_pipeline(preprocessing.SplineTransformer(n_knots=100, degree=100, extrapolation = "continue"), Ridge(alpha=1e-3))
-model = make_pipeline(preprocessing.PolynomialFeatures(degree=16), LinearRegression())
+model = make_pipeline(preprocessing.PolynomialFeatures(degree=12), LinearRegression())
 #model = Ridge(alpha=1)
 #model = LinearRegression()
 model.fit(X_train_scaled, y_train_scaled)
