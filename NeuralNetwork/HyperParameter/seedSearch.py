@@ -7,6 +7,7 @@ import os
 import random as rnd
 import time
 import datetime
+from sklearn.metrics import r2_score
 
 
 parser = argparse.ArgumentParser(
@@ -82,7 +83,8 @@ y_test_scaled = y_scaler.transform(y_test)
 out = {
     'seed': [],
     'loss': [],
-    'bestValidationScore': []
+    'bestValidationScore': [],
+    "testR2": []
 }
 
 
@@ -116,9 +118,11 @@ for i in range(args.num):
 
     # Train
     neuralNetwork.fit(X_train, y_train)
+    test_predictions = neuralNetwork.predict(X_test_scaled)
     out['seed'].append(seed)
     out['loss'].append(neuralNetwork.loss_)
     out['bestValidationScore'].append(neuralNetwork.best_validation_score_)
+    out["testR2"].append(r2_score(y_test_scaled, test_predictions))
 
     if (i % 15 == 0):
         out = saveData(out)

@@ -9,15 +9,15 @@ out = {
     'std': [],
 }
 
-df = pd.read_csv("../nfp3/seedSearchDefault.csv")
-# df = pd.read_csv("../nfpAll/seedSearchDefault.csv")
+#df = pd.read_csv("../nfp3Default/seedSearch.csv")
+df = pd.read_csv("../nfp3/seedSearch.csv")
 
 size = len(df.index)
-for i in range(1, 50):
+for i in range(1, 100):
     out["numPoints"].append(i+1)
-    out["std"].append(df.loc[0:i, 'bestValidationScore'].std())
+    out["std"].append(df.loc[0:i, 'testR2'].std())
 
 
 df3 = pd.DataFrame(out)
-# print(df3)
+print(df3.sort_values("numPoints", ascending=False))
 df3.plot("numPoints", "std")
