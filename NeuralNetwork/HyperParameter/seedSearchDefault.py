@@ -8,6 +8,7 @@ import random as rnd
 import time
 import datetime
 from sklearn.metrics import r2_score
+from qsc import Qsc
 
 
 parser = argparse.ArgumentParser(
@@ -23,7 +24,7 @@ parser.add_argument(
 parser.add_argument("-v", "--verbose", action="store_true",
                     help="Prints verbose including the predicted duration in seconds")
 parser.add_argument(
-    "-f", "--fileName", help="Name of the created file, ex \"NeuralNetwork/HyperParameter/randLoss.csv\"", type=str, default="NeuralNetwork/nfp3Default/seedSearchDefault.csv")
+    "-f", "--fileName", help="Name of the created file, ex \"NeuralNetwork/HyperParameter/randLoss.csv\"", type=str, default="NeuralNetwork/nfp3Default/seedSearchDefault2.csv")
 args = parser.parse_args()
 
 
@@ -47,7 +48,9 @@ def saveData(out):
         'seed': [],
         'loss': [],
         'bestValidationScore': [],
-	'testR2': [],
+	    'testR2': [],
+        "testR2Real":[],
+        "testR2RealNoOutiler":[],
     }
     return out
 
@@ -69,7 +72,9 @@ out = {
     'seed': [],
     'loss': [],
     'bestValidationScore': [],
-    "testR2": []
+    "testR2": [],
+    "testR2Real": [],
+    "testR2RealNoOutiler": [],
 }
 
 
@@ -92,7 +97,7 @@ for i in range(args.num):
     y_train_scaled = y_scaler.transform(y_train)
     y_test_scaled = y_scaler.transform(y_test)
     # Setup regressors
-    neuralNetwork = neural_network.MLPRegressor(hidden_layer_sizes=([35,35,35]),
+    neuralNetwork = neural_network.MLPRegressor(hidden_layer_sizes=(35, 35, 35),
                                                 activation='tanh',
                                                 solver='adam',
                                                 alpha=0.0001,
@@ -102,7 +107,7 @@ for i in range(args.num):
                                                 # power_t=0.5, (sgd)
                                                 max_iter=1000,
                                                 shuffle=True,
-                                                random_state=seed,
+                                                random_state=0,
                                                 tol=0.0001,
                                                 verbose=args.verbose,
                                                 warm_start=False,
@@ -115,14 +120,50 @@ for i in range(args.num):
                                                 epsilon=1e-08,  # (adam)
                                                 n_iter_no_change=10,
                                                 )
+    neuralNetwork.fit(X_train_scaled, y_train_scaled)
+    Y_NN = neuralNetwork.predict(X_test_scaled)
+    Y_NN_unscaled = y_scaler.inverse_transform(Y_NN)
+
+    out2 = {
+        #"askedRotTrans" : [],
+        #"askedAxLength" : [],
+        #"askedMaxElong" : [],
+        "RotTrans" : [],
+        "axLenght" : [],
+        "max_elong" : [],
+    }
+    OutlierList = []
+    for i in range(len(Y_NN_unscaled)):
+        rc1=Y_NN_unscaled[i][0]
+        zs1=Y_NN_unscaled[i][1]
+        eta=Y_NN_unscaled[i][2]
+        stel = Qsc(rc=[1,rc1],zs=[0,zs1],nfp=args.nfp,etabar=eta)
+        #out["askedRotTrans"].append(X_test.loc[index,"RotTrans"])
+        #out["askedAxLength"].append(X_test.loc[index,"axLenght"])
+        #out["askedMaxElong"].append(X_test.loc[index,"max_elong"])
+        out2["RotTrans"].append(stel.iota)
+        out2["axLenght"].append(stel.axis_length / 2. / np.pi)
+        out2["max_elong"].append(stel.max_elongation)
+        if stel.max_elongation > 15:
+            print(i, " max elongation >15")
+            OutlierList.append(i)
+
+    predictedX=pd.DataFrame(out2)
 
     # Train
-    neuralNetwork.fit(X_train, y_train)
     test_predictions = neuralNetwork.predict(X_test_scaled)
     out['seed'].append(seed)
     out['loss'].append(neuralNetwork.loss_)
     out['bestValidationScore'].append(neuralNetwork.best_validation_score_)
     out["testR2"].append(r2_score(y_test_scaled, test_predictions))
+
+    out["testR2Real"].append(r2_score(X_test, predictedX))
+
+    predictedXNoOutlier = predictedX.drop(OutlierList)
+    predictedX_scaledNoOutlier = X_scaler.transform(predictedXNoOutlier)
+    X_test_scaledNoOutlier = X_test_scaled
+    X_test_scaledNoOutlier=np.delete(X_test_scaledNoOutlier,OutlierList,axis=0)
+    out["testR2RealNoOutiler"].append(r2_score(X_test_scaledNoOutlier, predictedX_scaledNoOutlier))
 
     if (i % 15 == 0):
         out = saveData(out)
