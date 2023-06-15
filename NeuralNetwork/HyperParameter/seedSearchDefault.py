@@ -46,7 +46,8 @@ def saveData(out):
     out = {
         'seed': [],
         'loss': [],
-        'bestValidationScore': []
+        'bestValidationScore': [],
+	'testR2': [],
     }
     return out
 
