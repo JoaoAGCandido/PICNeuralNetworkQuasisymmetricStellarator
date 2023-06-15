@@ -1,6 +1,7 @@
 import pandas as pd
 from sklearn import neural_network, preprocessing
 from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
 import argparse
 import numpy as np
 import os
@@ -23,7 +24,7 @@ parser.add_argument(
 parser.add_argument("-v", "--verbose", action="store_true",
                     help="Prints verbose including the predicted duration in seconds")
 parser.add_argument(
-    "-f", "--fileName", help="Name of the created file, ex \"NeuralNetwork/HyperParameter/randLoss.csv\"", type=str, default="NeuralNetwork/nfp3Default/seedSearchDefault.csv")
+    "-f", "--fileName", help="Name of the created file, ex \"NeuralNetwork/HyperParameter/randLoss.csv\"", type=str, default="OtherModels/seedSearchLinear.csv")
 args = parser.parse_args()
 
 
@@ -37,7 +38,6 @@ def estimatedTime():
 def saveData(out):
     df = pd.DataFrame(out)
     file_exists = os.path.isfile(args.fileName)
-    df.sort_values("bestValidationScore", ascending=True)
     if file_exists:
         df.to_csv(args.fileName, index=False, header=False, mode="a")
     else:
@@ -66,8 +66,6 @@ X = df.loc[:, ['RotTrans', 'axLenght', 'max_elong']]
 # arrays to store output
 out = {
     'seed': [],
-    'loss': [],
-    'bestValidationScore': [],
     "testR2": []
 }
 
@@ -90,37 +88,14 @@ for i in range(args.num):
     y_scaler.fit(y_train)
     y_train_scaled = y_scaler.transform(y_train)
     y_test_scaled = y_scaler.transform(y_test)
-    # Setup regressors
-    neuralNetwork = neural_network.MLPRegressor(hidden_layer_sizes=([35,35,35]),
-                                                activation='tanh',
-                                                solver='adam',
-                                                alpha=0.0001,
-                                                batch_size='auto',
-                                                # learning_rate='constant', (sgd)
-                                                learning_rate_init=0.001,
-                                                # power_t=0.5, (sgd)
-                                                max_iter=1000,
-                                                shuffle=True,
-                                                random_state=seed,
-                                                tol=0.0001,
-                                                verbose=args.verbose,
-                                                warm_start=False,
-                                                # momentum=0.9, (sgd)
-                                                # nesterovs_momentum=True, (sgd)
-                                                early_stopping=args.noEarlyStop,
-                                                validation_fraction=0.1,
-                                                beta_1=0.9,  # (adam)
-                                                beta_2=0.999,  # (adam)
-                                                epsilon=1e-08,  # (adam)
-                                                n_iter_no_change=10,
-                                                )
 
-    # Train
-    neuralNetwork.fit(X_train, y_train)
-    test_predictions = neuralNetwork.predict(X_test_scaled)
+    # Setup regressors
+    linearReg = LinearRegression()
+    linearReg.fit(X_train_scaled, y_train_scaled)
+
+    test_predictions = linearReg.predict(X_test_scaled)
+
     out['seed'].append(seed)
-    out['loss'].append(neuralNetwork.loss_)
-    out['bestValidationScore'].append(neuralNetwork.best_validation_score_)
     out["testR2"].append(r2_score(y_test_scaled, test_predictions))
 
     if (i % 15 == 0):

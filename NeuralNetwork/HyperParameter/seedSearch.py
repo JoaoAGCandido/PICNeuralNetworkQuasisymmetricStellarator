@@ -63,22 +63,6 @@ else:
 X = df.loc[:, ['RotTrans', 'axLenght', 'max_elong']]
 
 
-# Split training and testing sets
-X_train, X_test, y_train, y_test = \
-    train_test_split(X, y, test_size=0.1, train_size=0.9,
-                     random_state=0)
-
-#scale
-X_scaler = preprocessing.StandardScaler()
-X_scaler.fit(X_train)
-X_train_scaled = X_scaler.transform(X_train)
-X_test_scaled = X_scaler.transform(X_test)
-
-y_scaler = preprocessing.StandardScaler()
-y_scaler.fit(y_train)
-y_train_scaled = y_scaler.transform(y_train)
-y_test_scaled = y_scaler.transform(y_test)
-
 # arrays to store output
 out = {
     'seed': [],
@@ -90,7 +74,22 @@ out = {
 
 startTime = time.time()
 for i in range(args.num):
-    seed = rnd.randrange(0, 1000)
+    seed = rnd.randrange(0, 10000)
+    # Split training and testing sets
+    X_train, X_test, y_train, y_test = \
+        train_test_split(X, y, test_size=0.1, train_size=0.9,
+                        random_state=seed)
+
+    #scale
+    X_scaler = preprocessing.StandardScaler()
+    X_scaler.fit(X_train)
+    X_train_scaled = X_scaler.transform(X_train)
+    X_test_scaled = X_scaler.transform(X_test)
+
+    y_scaler = preprocessing.StandardScaler()
+    y_scaler.fit(y_train)
+    y_train_scaled = y_scaler.transform(y_train)
+    y_test_scaled = y_scaler.transform(y_test)
     # Setup regressors
     neuralNetwork = neural_network.MLPRegressor(hidden_layer_sizes=([45,45,45,45]),
                                                 activation='tanh',
@@ -102,7 +101,7 @@ for i in range(args.num):
                                                 # power_t=0.5, (sgd)
                                                 max_iter=1000,
                                                 shuffle=True,
-                                                random_state=seed,
+                                                random_state=0,
                                                 tol=0.0001,
                                                 verbose=args.verbose,
                                                 warm_start=False,
