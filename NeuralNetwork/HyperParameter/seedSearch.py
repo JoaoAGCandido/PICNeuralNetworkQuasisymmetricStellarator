@@ -117,7 +117,7 @@ for i in range(args.num):
                                                 )
 
     # Train
-    neuralNetwork.fit(X_train, y_train)
+    neuralNetwork.fit(X_train_scaled, y_train_scaled)
     test_predictions = neuralNetwork.predict(X_test_scaled)
     out['seed'].append(seed)
     out['loss'].append(neuralNetwork.loss_)

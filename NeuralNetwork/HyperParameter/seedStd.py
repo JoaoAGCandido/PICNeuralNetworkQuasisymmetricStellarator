@@ -10,7 +10,9 @@ out = {
 }
 
 #df = pd.read_csv("../nfp3Default/seedSearchDefault.csv")
-df = pd.read_csv("../nfp3/seedSearchOptimsed.csv")
+#df = pd.read_csv("../nfp3/seedSearchOptimized.csv")
+#df = pd.read_csv("../../OtherModels/seedSearchPoly.csv")
+df = pd.read_csv("../../OtherModels/seedSearchLinear.csv")
 
 size = len(df.index)
 for i in range(1, 100):
