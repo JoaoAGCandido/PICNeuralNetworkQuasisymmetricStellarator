@@ -23,7 +23,7 @@ parser.add_argument(
 parser.add_argument("-v", "--verbose", action="store_true",
                     help="Prints verbose including the predicted duration in seconds")
 parser.add_argument(
-    "-f", "--fileName", help="Name of the created file, ex \"NeuralNetwork/HyperParameter/randLoss.csv\"", type=str, default="NeuralNetwork/nfp3/seedSearchOptimized.csv")
+    "-f", "--fileName", help="Name of the created file, ex \"NeuralNetwork/HyperParameter/randLoss.csv\"", type=str, default="NeuralNetwork/nfp3Default/seedSearchDefault.csv")
 args = parser.parse_args()
 
 
@@ -92,13 +92,13 @@ startTime = time.time()
 for i in range(args.num):
     seed = rnd.randrange(0, 1000)
     # Setup regressors
-    neuralNetwork = neural_network.MLPRegressor(hidden_layer_sizes=([45,45,45,45]),
+    neuralNetwork = neural_network.MLPRegressor(hidden_layer_sizes=([35,35,35]),
                                                 activation='tanh',
                                                 solver='adam',
-                                                alpha=7.910723593282952e-05,
-                                                batch_size=87,
+                                                alpha=0.0001,
+                                                batch_size='auto',
                                                 # learning_rate='constant', (sgd)
-                                                learning_rate_init=0.0009269282149794735,
+                                                learning_rate_init=0.001,
                                                 # power_t=0.5, (sgd)
                                                 max_iter=1000,
                                                 shuffle=True,

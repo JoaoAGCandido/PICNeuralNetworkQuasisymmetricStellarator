@@ -9,8 +9,8 @@ out = {
     'std': [],
 }
 
-#df = pd.read_csv("../nfp3Default/seedSearch.csv")
-df = pd.read_csv("../nfp3/seedSearch.csv")
+#df = pd.read_csv("../nfp3Default/seedSearchDefault.csv")
+df = pd.read_csv("../nfp3/seedSearchOptimsed.csv")
 
 size = len(df.index)
 for i in range(1, 100):
