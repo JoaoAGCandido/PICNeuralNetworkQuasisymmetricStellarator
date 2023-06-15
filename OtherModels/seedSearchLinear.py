@@ -45,8 +45,7 @@ def saveData(out):
     # clear out
     out = {
         'seed': [],
-        'loss': [],
-        'bestValidationScore': []
+	'testR2': [],
     }
     return out
 
