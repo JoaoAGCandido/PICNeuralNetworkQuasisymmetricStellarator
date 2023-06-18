@@ -8,7 +8,7 @@ import os
 import random as rnd
 import time
 import datetime
-from sklearn.metrics import r2_score
+from sklearn.metrics import r2_score, mean_absolute_error, mean_squared_error
 from qsc import Qsc
 
 
@@ -25,7 +25,7 @@ parser.add_argument(
 parser.add_argument("-v", "--verbose", action="store_true",
                     help="Prints verbose including the predicted duration in seconds")
 parser.add_argument(
-    "-f", "--fileName", help="Name of the created file, ex \"NeuralNetwork/HyperParameter/randLoss.csv\"", type=str, default="OtherModels/seedSearchLinear2.csv")
+    "-f", "--fileName", help="Name of the created file, ex \"NeuralNetwork/HyperParameter/randLoss.csv\"", type=str, default="OtherModels/seedSearchLinear3.csv")
 args = parser.parse_args()
 
 
@@ -49,6 +49,14 @@ def saveData(out):
 	    'testR2': [],
         "testR2Real":[],
         "testR2RealNoOutiler":[],
+        "mseRotTrans" : [],
+        "mseAxLength" : [],
+        "mseMElong" : [],
+        "maeRotTrans" : [],
+        "maeAxLength" : [],
+        "maeMElong" : [],
+        "mseMElongNoOutiler" : [],
+        "maeMElongNoOutiler" : [],
     }
     return out
 
@@ -71,6 +79,14 @@ out = {
     "testR2": [],
     "testR2Real": [],
     "testR2RealNoOutiler": [],
+    "mseRotTrans" : [],
+    "mseAxLength" : [],
+    "mseMElong" : [],
+    "maeRotTrans" : [],
+    "maeAxLength" : [],
+    "maeMElong" : [],
+    "mseMElongNoOutiler" : [],
+    "maeMElongNoOutiler" : [],
 }
 
 
@@ -139,6 +155,18 @@ for i in range(args.num):
     X_test_scaledNoOutlier = X_test_scaled
     X_test_scaledNoOutlier=np.delete(X_test_scaledNoOutlier,OutlierList,axis=0)
     out["testR2RealNoOutiler"].append(r2_score(X_test_scaledNoOutlier, predictedX_scaledNoOutlier))
+    out["mseRotTrans"].append(mean_squared_error(X_test["RotTrans"], predictedX["RotTrans"]))
+    out["mseAxLength"].append(mean_squared_error(X_test["axLenght"], predictedX["axLenght"]))
+    out["mseMElong"].append(mean_squared_error(X_test["max_elong"], predictedX["max_elong"]))
+    out["maeRotTrans"].append(mean_absolute_error(X_test["RotTrans"], predictedX["RotTrans"]))
+    out["maeAxLength"].append(mean_absolute_error(X_test["axLenght"], predictedX["axLenght"]))
+    out["maeMElong"].append(mean_absolute_error(X_test["max_elong"], predictedX["max_elong"]))
+    X_testNoOutlier = X_test.copy()
+    X_testNoOutlier.reset_index(inplace=True)
+    predictedXNoOutlier = predictedX.drop(OutlierList)
+    X_testNoOutlier = X_testNoOutlier.drop(OutlierList)
+    out["mseMElongNoOutiler"].append(mean_squared_error(X_testNoOutlier["max_elong"], predictedXNoOutlier["max_elong"]))
+    out["maeMElongNoOutiler"].append(mean_absolute_error(X_testNoOutlier["max_elong"], predictedXNoOutlier["max_elong"]))
 
     if (i % 15 == 0):
         out = saveData(out)
